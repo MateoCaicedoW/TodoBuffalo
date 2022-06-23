@@ -1,0 +1,35 @@
+<section class="layout-add d-flex flex-column" id="incomplete-tasks">
+    <div class="d-flex justify-content-end">
+        <a href="/new"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add Task</button>
+        </a>
+    </div>
+    <div class="content mt-3 shadow-sm rounded">
+        <table id="table" class="table table-hover   shadow-sm  rounded overflow-scroll table-fixed m-0"> 
+            <thead>
+                <tr class="top">
+                    <th class="py-3"></th>
+                    <th class="py-3 fw-normal w-50">Task</th>
+                    <th class="py-3 fw-normal">Complete By</th>
+                    <th class="py-3 fw-normal text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="rounded-bottom" id="items">
+                <%= for (i) in tasks { %>
+                    <tr >
+                        <td class="py-3"></td>
+                        <td class="py-3 text-info bi show-description"><%= i.Title %></td>
+                        <td class="py-3"><%= i.Must %></td>
+                        <td class="d-flex py-4  justify-content-center align-items-center">
+                            <a href="/edit/<%=i.ID%>">
+                                <button  type="button" class="btn btn-success ms-2 submit"><i class="fas fa-edit"></i></button>
+                            </a>
+                             <button type="button" class="btn btn-danger ms-2  delete-show-modal-player" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="far fa-trash-alt "></i></button>
+                        </td>
+                    </tr>
+                 <% } %>
+                
+            </tbody>
+        </table>
+
+    </div>
+</section>
