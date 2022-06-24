@@ -2,5 +2,5 @@ create_table("tasks"){
     t.Column("id", "uuid", {primary: true})
     t.Column("title", "string", {"size":100})
     t.Column("description", "string", {"size":250})
-    t.Column("must","datetime", {})
+    t.Column("must","date", {})
 }
