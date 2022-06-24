@@ -80,13 +80,21 @@ table tbody{
     right: 0;
 }
 
-#flash div{
+#flash{
     max-width: 400px;
-    background: #eb8c8c; 
-
-    span{
-       color: #683737;
+    #flash-error{
+        background: #eb8c8c;
+        span{
+            color: #683737;
+         } 
     }
+    #flash-success{
+        background: #42b883; 
+
+    }
+    
+
+    
    
     
 }

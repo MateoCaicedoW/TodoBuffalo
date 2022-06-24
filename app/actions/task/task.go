@@ -52,7 +52,7 @@ func Create(c buffalo.Context) error {
 	if err := models.DB().Create(task); err != nil {
 		return err
 	}
-
+	c.Flash().Add("success", "Record was successfully created!")
 	return c.Redirect(http.StatusSeeOther, "/")
 }
 
@@ -73,7 +73,6 @@ func Update(c buffalo.Context) error {
 	taskTemp := &models.Task{}
 	id := c.Param("id")
 	taskTemp.ID = id
-
 	if err := c.Bind(taskTemp); err != nil {
 		return err
 	}
@@ -90,6 +89,7 @@ func Update(c buffalo.Context) error {
 		return err
 	}
 
+	c.Flash().Add("success", "Record was successfully updated!")
 	return c.Redirect(http.StatusSeeOther, "/")
 }
 
@@ -101,5 +101,6 @@ func Delete(c buffalo.Context) error {
 	if err := models.DB().Destroy(taskTemp); err != nil {
 		return err
 	}
+	c.Flash().Add("success", "Record was successfully deleted!")
 	return c.Redirect(http.StatusSeeOther, "/")
 }

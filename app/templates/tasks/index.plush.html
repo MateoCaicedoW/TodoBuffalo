@@ -25,7 +25,7 @@
                                 <button  type="button" class="btn btn-success ms-2 submit"><i class="fas fa-edit"></i></button>
                             </a>
                                 <button type="button" class="btn btn-danger ms-2  delete-show-modal-player" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="far fa-trash-alt "></i></button>  
-                                <%= partial("tasks/modal.plush.html") %>
+                                <%= partial("tasks/modal.plush.html", {iD: i.ID}) %>
                             </td>
                     </tr>
                  <% } %>
