@@ -1,0 +1,17 @@
+    <div id="flash" class="d-flex flex-row justify-content-center me-3">
+        <%= for (k, messages) in flash { %>
+    
+            <%= for (i, msg) in messages { %>
+                <div class="d-flex flex-row-reverse text-white alert alert-<%= k %>" role="alert">
+                    <div>
+                        <button id="close-flash" type="button" class="ms-2 btn btn-close"></button>
+                    </div>
+                    <div>
+                        <span class="fw-bold">Error:</span>
+                        <p class="mt-2"><%= msg %></p>
+                    </div>
+                </div>
+             <% } %>
+        <% } %>
+    </div>
+

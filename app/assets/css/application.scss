@@ -9,6 +9,10 @@
     box-sizing: border-box;
 }
 
+
+body{
+    height: 100vh;
+}
 .head{
     background-color:rgb(101, 176, 206);
 }
@@ -68,6 +72,23 @@ table tbody{
 }
 #text-left .text-todo{
     width: 180px;
+}
+
+#flash{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+#flash div{
+    max-width: 400px;
+    background: #eb8c8c; 
+
+    span{
+       color: #683737;
+    }
+   
+    
 }
 
 @media (max-width: 802px) {

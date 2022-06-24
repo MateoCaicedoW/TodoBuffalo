@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="h-full">
+<html>
 <head>
   <title>ToDo Buffalo</title>
   
@@ -11,10 +11,15 @@
   <%= stylesheetTag("application.css") %>
   <%= javascriptTag("application.js", {defer: true}) %>
 </head>
-<body class="h-full">
+<body class="position-relative">
+ 
+  
   <%= partial("partials/header.plush.html") %>
+  <%= partial("partials/flash.plush.html")%>
+ 
 	<main class="container mt-3">
 		<%= yield %>
+
 	</main>
 </body>
 </html>
