@@ -1,4 +1,4 @@
-package task
+package todo
 
 import (
 	"TodoBuffalo/app/models"
@@ -22,17 +22,16 @@ func Index(c buffalo.Context) error {
 	if err := models.DB().All(&tasks); err != nil {
 		return err
 	}
-
 	c.Set("tasks", tasks)
 
-	return c.Render(http.StatusOK, r.HTML("tasks/index.plush.html"))
+	return c.Render(http.StatusOK, r.HTML("todo/index.plush.html"))
 }
 
 func New(c buffalo.Context) error {
 	var task models.Task
 	task.Must = time.Now()
 	c.Set("task", task)
-	return c.Render(http.StatusOK, r.HTML("tasks/new.plush.html"))
+	return c.Render(http.StatusOK, r.HTML("todo/new.plush.html"))
 }
 func Create(c buffalo.Context) error {
 	task := &models.Task{}
@@ -47,7 +46,7 @@ func Create(c buffalo.Context) error {
 	for item := range err.Errors {
 		c.Flash().Add("error", err.Errors[item][0])
 		c.Set("task", task)
-		return c.Render(http.StatusBadRequest, r.HTML("tasks/new.plush.html"))
+		return c.Render(http.StatusBadRequest, r.HTML("todo/new.plush.html"))
 	}
 	if err := models.DB().Create(task); err != nil {
 		return err
@@ -66,7 +65,7 @@ func Edit(c buffalo.Context) error {
 
 	c.Set("task", task)
 
-	return c.Render(http.StatusOK, r.HTML("tasks/edit.plush.html"))
+	return c.Render(http.StatusOK, r.HTML("todo/edit.plush.html"))
 }
 
 func Update(c buffalo.Context) error {
@@ -82,7 +81,7 @@ func Update(c buffalo.Context) error {
 	for item := range err.Errors {
 		c.Flash().Add("error", err.Errors[item][0])
 		c.Set("task", taskTemp)
-		return c.Render(http.StatusBadRequest, r.HTML("tasks/edit.plush.html"))
+		return c.Render(http.StatusBadRequest, r.HTML("todo/edit.plush.html"))
 	}
 
 	if err := models.DB().Update(taskTemp); err != nil {

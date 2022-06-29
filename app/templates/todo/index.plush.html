@@ -33,16 +33,11 @@
                             <%= form({action: "/delete/" +i.ID ,method:"DELETE"}) { %>
                                     <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>"><i
                                         class="far fa-trash-alt "></i></button>
-                                        <%= partial("tasks/modal.plush.html", {ID : i.ID}) %>
+                                        <%= partial("todo/modal.plush.html", {ID : i.ID}) %>
                             <% } %> 
-                         
-                         
-
                         </td>
                     </tr>
-                 
-                    
-                    <% } %> 
+                <% } %> 
             </tbody>
         </table>
 

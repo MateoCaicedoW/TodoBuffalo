@@ -1,9 +1,8 @@
 <section id="new-task" class="px-5 bg-white m-auto py-4 w-50 rounded-1 shadow-sm">
     <p class="fw-bold fs-3">
-        New Task
+        Edit Task
     </p>
-
-    <%= form_for(task, {action: "/new", method: "POST"}) { %>
-    <%= partial("tasks/form.plush.html") %>
+    <%= form_for(task, {action: "/edit/"+task.ID, method: "PUT"}) { %>
+     <%= partial("todo/form.plush.html") %>
     <% } %>
 </section>
