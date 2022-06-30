@@ -1,5 +1,7 @@
 <section class="layout-add d-flex flex-column" id="incomplete-tasks">
-    <div class="d-flex justify-content-end">
+    
+    <div class="d-flex justify-content-end  ">
+       
         <a href="/new"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
                 Task</button>
         </a>
@@ -40,7 +42,17 @@
                 <% } %> 
             </tbody>
         </table>
-
+    </div>
+    <div class="d-flex flex-row-reverse justify-content-between pt-3 align-content-center">
+        <div class="pagination-label">
+            <span class="opacity-25">Displaying <%= pagination.Offset + 1 %> - <%= pagination.Offset + pagination.PerPage %> of <%= pagination.TotalEntriesSize %></span> 
+           
+        </div>
+        <div class="align-self-center">
+            <%= paginator(pagination) %>
+        </div>
+      
 
     </div>
+    
 </section>

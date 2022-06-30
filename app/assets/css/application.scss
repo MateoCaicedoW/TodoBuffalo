@@ -91,13 +91,23 @@ table tbody{
     #flash-success{
         background: #42b883; 
 
-    }
-    
-
-    
-   
+    }   
     
 }
+.active{
+    .page-link{
+        background-color: rgb(101, 176, 206) !important;
+        border-color:  rgb(101, 176, 206) !important;
+        color: white !important;
+    }
+
+}
+.page-link{
+    color: rgb(101, 176, 206) !important;
+
+}
+
+
 
 @media (max-width: 802px) {
     #text-left{

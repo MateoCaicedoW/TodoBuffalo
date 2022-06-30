@@ -19,10 +19,23 @@ var (
 
 func Index(c buffalo.Context) error {
 	tasks := []models.Task{}
-	if err := models.DB().All(&tasks); err != nil {
+
+	// if err := models.DB().All(&tasks); err != nil {
+	// 	return err
+	// }
+
+	// q := models.DB().Paginate(1, 10).Order("created_at desc")
+	// q.All(&tasks)
+	// fmt.Println(q.Paginator.TotalPages)
+
+	q := models.DB().PaginateFromParams(c.Params())
+	q = q.Order("created_at desc")
+
+	if err := q.All(&tasks); err != nil {
 		return err
 	}
 	c.Set("tasks", tasks)
+	c.Set("pagination", q.Paginator)
 
 	return c.Render(http.StatusOK, r.HTML("todo/index.plush.html"))
 }
@@ -37,7 +50,6 @@ func Create(c buffalo.Context) error {
 	task := &models.Task{}
 	task.ID = uuid.Must(uuid.NewV4()).String()
 	if err := c.Bind(task); err != nil {
-
 		return err
 	}
 

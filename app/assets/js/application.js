@@ -10,8 +10,17 @@ flash.addEventListener("click", (e)=>{
         flash.classList.add("d-none")
     }
 })
+let form = document.querySelector('#form-entry')
 
+let select = document.querySelector('#entries')
+select.addEventListener('change', (e)=>{
+    let select = e.target
 
+    let inputHidden = document.querySelector('#entry-select')
+    inputHidden.value = select.value
+    console.log(inputHidden.value)
+    form.submit()
+})
 
 
 

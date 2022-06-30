@@ -19,6 +19,7 @@ require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
+	github.com/corpix/uarand v0.0.0-20170723150923-031be390f409 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
@@ -42,6 +43,7 @@ require (
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/sessions v1.2.1 // indirect
+	github.com/icrowley/fake v0.0.0-20220625154756-3c7517006344 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.11.0 // indirect
@@ -56,6 +58,7 @@ require (
 	github.com/karrick/godirwalk v1.16.1 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/luna-duclos/instrumentedsql v1.1.3 // indirect
+	github.com/markbates/inflect v1.0.4 // indirect
 	github.com/markbates/oncer v1.0.0 // indirect
 	github.com/markbates/refresh v1.12.0 // indirect
 	github.com/markbates/safe v1.0.1 // indirect
@@ -74,13 +77,17 @@ require (
 	github.com/sourcegraph/syntaxhighlight v0.0.0-20170531221838-bd320f5d308e // indirect
 	github.com/spf13/cobra v1.4.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/testify v1.7.1 // indirect
+	github.com/stretchr/testify v1.7.5 // indirect
+	github.com/wawandco/fako v0.0.0-20180828010250-c36a0bc97398 // indirect
 	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871 // indirect
+	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20211205182925-97ca703d548d // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/tools v0.1.7 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -8,11 +8,11 @@ import (
 
 type Task struct {
 	ID          string    `db:"id"`
-	Title       string    `db:"title"`
-	Description string    `db:"description"`
-	CreatedAt   time.Time `db:"created_at"`
-	UpdatedAt   time.Time `db:"updated_at"`
-	Must        time.Time `db:"must"`
+	Title       string    `db:"title" fako:"job_title" `
+	Description string    `db:"description" fako:"sentence" `
+	CreatedAt   time.Time `db:"created_at" `
+	UpdatedAt   time.Time `db:"updated_at" `
+	Must        time.Time `db:"must" `
 }
 
 func (task *Task) IsValid(errors *validate.Errors) {
