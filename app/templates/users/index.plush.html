@@ -2,8 +2,8 @@
     
     <div class="d-flex justify-content-end  ">
        
-        <a href="/new"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
-                Task</button>
+        <a href="/user/new"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
+                User</button>
         </a>
     </div>
     <div class="content mt-3 shadow-sm rounded">
@@ -11,38 +11,35 @@
             <thead>
                 <tr class="top">
                     <th class="py-3"></th>
-                    <th class="py-3 fw-normal w-50">Task</th>
-                    <th class="py-3 fw-normal">Must be to</th>
-                    <th class="py-3 fw-normal text-center">Actions</th>
+                    <th class="py-3 fw-normal">FirstName</th>
+                    <th class="py-3 fw-normal">LastName</th>
+                    <th class="py-3 fw-normal text-center">Email</th>
+					<th class="py-3 fw-normal text-center">Action</th>
                 </tr>
             </thead>
             <tbody class="rounded-bottom" id="items">
 
-                <%= for (i) in tasks { %>
+                <%= for (i) in users { %>
                     <tr>
                         <td class="py-3 text-center px-0">
-                            <%= form({action: "/status/" +i.ID ,method:"PUT", id:"form-status"}) { %>
-                                <%= if (i.Status == true)  {%>
-                                    <button class="btn p-0" type="submit"> <i class="fa-solid fa-ban"></i></button>
-                                <% } else { %>
-                                    <button class="btn p-0" type="submit"><i class="fa-solid fa-circle-check"></i> </button>
-                                <% } %>
-                             <% } %> 
-                            
-                        
+							
                         </td>
                         <td class="py-3 text-info bi show-description">
-                            <%= i.Title %>
+                            <%= i.FirstName %>
                         </td>
                         <td class="py-3">
-                            <%= i.Must.Format("2006-02-01") %>
+                            <%= i.LastName %>
                         </td>
+						<td class="py-3">
+                            <%= i.Email %>
+                        </td>
+
                         <td class="d-flex py-4  justify-content-center align-items-center">
                             <a href="/edit/<%=i.ID%>">
                                 <button type="button" class="btn btn-success ms-2 submit"><i
                                         class="fas fa-edit"></i></button>
                             </a>
-                            <%= form({action: "/delete/" +i.ID ,method:"DELETE"}) { %>
+                            <%= form({action: "users/delete/" +i.ID ,method:"DELETE"}) { %>
                                     <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>"><i
                                         class="far fa-trash-alt "></i></button>
                                         <%= partial("todo/modal.plush.html", {ID : i.ID}) %>

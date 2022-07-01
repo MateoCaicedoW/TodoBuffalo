@@ -6,13 +6,14 @@ import (
 	"time"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gofrs/uuid"
 )
 
 func Index(c buffalo.Context) error {
 	tasks := []models.Task{}
-
+	tx := c.Value("tx").(*pop.Connection)
 	// if err := models.DB().All(&tasks); err != nil {
 	// 	return err
 	// }
@@ -21,7 +22,7 @@ func Index(c buffalo.Context) error {
 	// q.All(&tasks)
 	// fmt.Println(q.Paginator.TotalPages)
 
-	q := models.DB().PaginateFromParams(c.Params())
+	q := tx.PaginateFromParams(c.Params())
 	q = q.Order("created_at desc")
 
 	if err := q.All(&tasks); err != nil {
@@ -41,6 +42,7 @@ func New(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.HTML("todo/new.plush.html"))
 }
 func Create(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	task := &models.Task{}
 	if err := c.Bind(task); err != nil {
 		return err
@@ -52,7 +54,7 @@ func Create(c buffalo.Context) error {
 		c.Set("task", task)
 		return c.Render(http.StatusBadRequest, r.HTML("todo/new.plush.html"))
 	}
-	if err := models.DB().Create(task); err != nil {
+	if err := tx.Create(task); err != nil {
 
 		return err
 	}
@@ -74,6 +76,7 @@ func Edit(c buffalo.Context) error {
 }
 
 func Update(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	taskTemp := &models.Task{}
 	id := c.Param("id")
 	taskTemp.ID = uuid.FromStringOrNil(id)
@@ -89,7 +92,7 @@ func Update(c buffalo.Context) error {
 		return c.Render(http.StatusBadRequest, r.HTML("todo/edit.plush.html"))
 	}
 
-	if err := models.DB().Update(taskTemp); err != nil {
+	if err := tx.Update(taskTemp); err != nil {
 		return err
 	}
 
@@ -98,11 +101,12 @@ func Update(c buffalo.Context) error {
 }
 
 func Delete(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	taskTemp := &models.Task{}
 	id := c.Param("id")
 	taskTemp.ID = uuid.FromStringOrNil(id)
 
-	if err := models.DB().Destroy(taskTemp); err != nil {
+	if err := tx.Destroy(taskTemp); err != nil {
 		return err
 	}
 	c.Flash().Add("success", "Record was successfully deleted!")
@@ -110,14 +114,15 @@ func Delete(c buffalo.Context) error {
 }
 
 func Status(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	taskTemp := &models.Task{}
 	id := c.Param("id")
 	taskTemp.ID = uuid.FromStringOrNil(id)
-	if err := models.DB().Find(taskTemp, id); err != nil {
+	if err := tx.Find(taskTemp, id); err != nil {
 		return err
 	}
 	taskTemp.Status = !taskTemp.Status
-	if err := models.DB().Update(taskTemp); err != nil {
+	if err := tx.Update(taskTemp); err != nil {
 		return err
 	}
 	if taskTemp.Status {

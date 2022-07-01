@@ -21,3 +21,15 @@ var _ = grift.Add("create:task", func(c *grift.Context) error {
 	}
 	return nil
 })
+
+var _ = grift.Add("create:users", func(c *grift.Context) error {
+
+	for i := 0; i < 30; i++ {
+		var user models.User
+		fako.Fill(&user)
+		if err := models.DB().Create(&user); err != nil {
+			return err
+		}
+	}
+	return nil
+})
