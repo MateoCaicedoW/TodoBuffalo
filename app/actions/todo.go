@@ -1,20 +1,13 @@
-package todo
+package actions
 
 import (
 	"TodoBuffalo/app/models"
-	"TodoBuffalo/app/render"
 	"net/http"
 	"time"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gofrs/uuid"
-)
-
-var (
-	// r is a buffalo/render Engine that will be used by actions
-	// on this package to render render HTML or any other formats.
-	r = render.Engine
 )
 
 func Index(c buffalo.Context) error {
@@ -51,9 +44,7 @@ func Create(c buffalo.Context) error {
 	if err := c.Bind(task); err != nil {
 		return err
 	}
-
 	err := validate.Validate(task)
-
 	for item := range err.Errors {
 		c.Flash().Add("error", err.Errors[item][0])
 		c.Set("task", task)

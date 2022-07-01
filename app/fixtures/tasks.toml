@@ -1,0 +1,31 @@
+[[scenario]]
+name = "tasks"
+
+  [[scenario.table]]
+    name = "tasks"
+
+    [[scenario.table.row]]
+      id = "<%= uuid() %>"
+      title = "This is task #1"
+      description = "This is the body of task #1"
+      must = "<%= now() %>"
+      created_at = "<%= now() %>"
+      updated_at = "<%= now() %>"
+
+    [[scenario.table.row]]
+      id = "<%= uuid() %>"
+      title = "This is task #2"
+      description = "This is the body of task #2"
+      must = "<%= now() %>"
+      created_at = "<%= now() %>"
+      updated_at = "<%= now() %>"
+      
+    [[scenario.table.row]]
+      id = "<%= uuid() %>"
+      title = "This is task #3"
+      description = "This is the body of task #3"
+      must = "<%= now() %>"
+      created_at = "<%= now() %>"
+      updated_at = "<%= now() %>"
+
+  

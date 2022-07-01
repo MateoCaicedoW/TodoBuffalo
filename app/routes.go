@@ -1,7 +1,7 @@
 package app
 
 import (
-	"TodoBuffalo/app/actions/todo"
+	"TodoBuffalo/app/actions"
 	"TodoBuffalo/app/middleware"
 	"TodoBuffalo/public"
 	"net/http"
@@ -16,11 +16,11 @@ func setRoutes(root *buffalo.App) {
 	root.Use(middleware.ParameterLogger)
 	root.Use(middleware.CSRF)
 
-	root.GET("/", todo.Index)
-	root.GET("/new", todo.New)
-	root.GET("/edit/{id}", todo.Edit)
-	root.POST("/new", todo.Create)
-	root.PUT("/edit/{id}", todo.Update)
-	root.DELETE("/delete/{id}", todo.Delete)
+	root.GET("/", actions.Index)
+	root.GET("/new", actions.New)
+	root.GET("/edit/{id}", actions.Edit)
+	root.POST("/new", actions.Create)
+	root.PUT("/edit/{id}", actions.Update)
+	root.DELETE("/delete/{id}", actions.Delete)
 	root.ServeFiles("/", http.FS(public.FS()))
 }

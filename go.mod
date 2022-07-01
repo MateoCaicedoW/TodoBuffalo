@@ -16,6 +16,16 @@ require (
 )
 
 require (
+	github.com/cockroachdb/cockroach-go v0.0.0-20190916165215-ad57a61cc915 // indirect
+	github.com/gobuffalo/genny v0.6.0 // indirect
+	github.com/gobuffalo/packd v1.0.1 // indirect
+	github.com/gobuffalo/plush v3.8.3+incompatible // indirect
+	github.com/gobuffalo/pop v4.13.1+incompatible // indirect
+	github.com/gobuffalo/validate v2.0.3+incompatible // indirect
+	github.com/lib/pq v1.10.5 // indirect
+)
+
+require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
@@ -37,6 +47,7 @@ require (
 	github.com/gobuffalo/meta v0.3.1 // indirect
 	github.com/gobuffalo/nulls v0.4.1 // indirect
 	github.com/gobuffalo/plush/v4 v4.1.10 // indirect
+	github.com/gobuffalo/suite v2.8.2+incompatible
 	github.com/gobuffalo/tags/v3 v3.1.2 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
