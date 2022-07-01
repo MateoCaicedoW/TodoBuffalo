@@ -14,6 +14,7 @@ type Task struct {
 	CreatedAt   time.Time `db:"created_at" `
 	UpdatedAt   time.Time `db:"updated_at" `
 	Must        time.Time `db:"must" `
+	Status      bool      `db:"status" `
 }
 
 func (task *Task) IsValid(errors *validate.Errors) {

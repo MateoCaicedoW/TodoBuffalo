@@ -22,5 +22,6 @@ func setRoutes(root *buffalo.App) {
 	root.POST("/new", actions.Create)
 	root.PUT("/edit/{id}", actions.Update)
 	root.DELETE("/delete/{id}", actions.Delete)
+	root.PUT("/status/{id}", actions.Status)
 	root.ServeFiles("/", http.FS(public.FS()))
 }

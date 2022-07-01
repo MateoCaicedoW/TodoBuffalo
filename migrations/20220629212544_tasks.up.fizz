@@ -3,4 +3,5 @@ create_table("tasks"){
     t.Column("title", "string", {"size":100})
     t.Column("description", "string", {"size":450})
     t.Column("must","date", {})
+    t.Column("status", "bool", {})
 }

@@ -90,3 +90,20 @@ func (as *ActionSuite) Test_Destroy() {
 	as.Equal("/", res.Location())
 
 }
+
+func (as *ActionSuite) Test_Status() {
+	task := &models.Task{}
+	fako.Fill(task)
+	task.Must = time.Now()
+	err := as.DB.Create(task)
+	as.NoError(err)
+
+	taskUpdate := &models.Task{}
+	fako.Fill(taskUpdate)
+	taskUpdate.ID = task.ID
+	taskUpdate.Status = true
+
+	res := as.HTML("/status/" + task.ID.String()).Put(taskUpdate)
+	as.Equal(303, res.Code)
+	as.Equal("/", res.Location())
+}

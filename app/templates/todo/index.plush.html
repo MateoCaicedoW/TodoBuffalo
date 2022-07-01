@@ -20,7 +20,17 @@
 
                 <%= for (i) in tasks { %>
                     <tr>
-                        <td class="py-3"></td>
+                        <td class="py-3 text-center px-0">
+                            <%= form({action: "/status/" +i.ID ,method:"PUT", id:"form-status"}) { %>
+                                <%= if (i.Status == true)  {%>
+                                    <button class="btn p-0" type="submit"> <i class="fa-solid fa-ban"></i></button>
+                                <% } else { %>
+                                    <button class="btn p-0" type="submit"><i class="fa-solid fa-circle-check"></i> </button>
+                                <% } %>
+                             <% } %> 
+                            
+                        
+                        </td>
                         <td class="py-3 text-info bi show-description">
                             <%= i.Title %>
                         </td>

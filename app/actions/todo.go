@@ -36,6 +36,7 @@ func Index(c buffalo.Context) error {
 func New(c buffalo.Context) error {
 	var task models.Task
 	task.Must = time.Now()
+
 	c.Set("task", task)
 	return c.Render(http.StatusOK, r.HTML("todo/new.plush.html"))
 }
@@ -44,6 +45,7 @@ func Create(c buffalo.Context) error {
 	if err := c.Bind(task); err != nil {
 		return err
 	}
+	task.Status = false
 	err := validate.Validate(task)
 	for item := range err.Errors {
 		c.Flash().Add("error", err.Errors[item][0])
@@ -104,5 +106,27 @@ func Delete(c buffalo.Context) error {
 		return err
 	}
 	c.Flash().Add("success", "Record was successfully deleted!")
+	return c.Redirect(http.StatusSeeOther, "/")
+}
+
+func Status(c buffalo.Context) error {
+	taskTemp := &models.Task{}
+	id := c.Param("id")
+	taskTemp.ID = uuid.FromStringOrNil(id)
+	if err := models.DB().Find(taskTemp, id); err != nil {
+		return err
+	}
+	taskTemp.Status = !taskTemp.Status
+	if err := models.DB().Update(taskTemp); err != nil {
+		return err
+	}
+	if taskTemp.Status {
+		c.Flash().Add("success", "Record was successfully completed!")
+	}
+
+	if !taskTemp.Status {
+		c.Flash().Add("success", "Record was successfully uncompleted!")
+	}
+
 	return c.Redirect(http.StatusSeeOther, "/")
 }

@@ -14,6 +14,7 @@ var _ = grift.Add("create:task", func(c *grift.Context) error {
 		var task models.Task
 		fako.Fill(&task)
 		task.Must = time.Now()
+		task.Status = false
 		if err := models.DB().Create(&task); err != nil {
 			return err
 		}
