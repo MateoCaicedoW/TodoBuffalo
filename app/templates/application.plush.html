@@ -15,10 +15,12 @@
  
   
   <%= partial("partials/header.plush.html") %>
-  <%= partial("partials/flash.plush.html")%>
+
  
 	<main class="container mt-3">
+   
 		<%= yield %>
+    <%= partial("partials/flash.plush.html")%>
 
 	</main>
 </body>

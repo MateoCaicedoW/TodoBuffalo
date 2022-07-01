@@ -48,7 +48,6 @@ func New(c buffalo.Context) error {
 }
 func Create(c buffalo.Context) error {
 	task := &models.Task{}
-	task.ID = uuid.Must(uuid.NewV4()).String()
 	if err := c.Bind(task); err != nil {
 		return err
 	}
@@ -61,6 +60,7 @@ func Create(c buffalo.Context) error {
 		return c.Render(http.StatusBadRequest, r.HTML("todo/new.plush.html"))
 	}
 	if err := models.DB().Create(task); err != nil {
+
 		return err
 	}
 	c.Flash().Add("success", "Record was successfully created!")
@@ -70,7 +70,7 @@ func Create(c buffalo.Context) error {
 func Edit(c buffalo.Context) error {
 	var task models.Task
 	id := c.Param("id")
-	task.ID = id
+	task.ID = uuid.FromStringOrNil(id)
 	if err := models.DB().Find(&task, id); err != nil {
 		return err
 	}
@@ -83,7 +83,7 @@ func Edit(c buffalo.Context) error {
 func Update(c buffalo.Context) error {
 	taskTemp := &models.Task{}
 	id := c.Param("id")
-	taskTemp.ID = id
+	taskTemp.ID = uuid.FromStringOrNil(id)
 	if err := c.Bind(taskTemp); err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func Update(c buffalo.Context) error {
 func Delete(c buffalo.Context) error {
 	taskTemp := &models.Task{}
 	id := c.Param("id")
-	taskTemp.ID = id
+	taskTemp.ID = uuid.FromStringOrNil(id)
 
 	if err := models.DB().Destroy(taskTemp); err != nil {
 		return err

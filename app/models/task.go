@@ -4,10 +4,11 @@ import (
 	"time"
 
 	"github.com/gobuffalo/validate/v3"
+	"github.com/gofrs/uuid"
 )
 
 type Task struct {
-	ID          string    `db:"id"`
+	ID          uuid.UUID `db:"id"`
 	Title       string    `db:"title" fako:"job_title" `
 	Description string    `db:"description" fako:"sentence" `
 	CreatedAt   time.Time `db:"created_at" `

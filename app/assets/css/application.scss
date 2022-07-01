@@ -74,14 +74,14 @@ table tbody{
     width: 180px;
 }
 
+
+
 #flash{
     position: absolute;
     bottom: 0;
     right: 0;
-}
-
-#flash{
     max-width: 400px;
+    margin-top: 20px !important;
     #flash-error{
         background: #eb8c8c;
         span{
@@ -102,7 +102,15 @@ table tbody{
     }
 
 }
+.disabled{
+    .page-link{
+        color: rgb(144, 160, 166) !important;
+    }
+
+}
+
 .page-link{
+    position: static !important;
     color: rgb(101, 176, 206) !important;
 
 }
