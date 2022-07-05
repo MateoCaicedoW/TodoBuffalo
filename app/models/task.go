@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gobuffalo/validate/v3"
@@ -14,7 +13,7 @@ type Task struct {
 	Description string    `db:"description" fako:"sentence" `
 	CreatedAt   time.Time `db:"created_at" `
 	UpdatedAt   time.Time `db:"updated_at" `
-	UserID      uuid.UUID `db:"user_id"`
+	UserID      uuid.UUID `db:"user_id" `
 	Must        time.Time `db:"must" `
 	Status      bool      `db:"status" `
 	User        *User     `belongs_to:"users"`
@@ -33,6 +32,5 @@ func (task *Task) IsValid(errors *validate.Errors) {
 	if task.UserID == uuid.Nil {
 		errors.Add("user_id", "User must not be empty")
 	}
-	fmt.Println("aaaaaaaa", task.UserID)
 
 }

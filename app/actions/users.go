@@ -7,6 +7,7 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
+	"github.com/gobuffalo/validate/v3"
 	"golang.org/x/crypto/bcrypt"
 
 	"TodoBuffalo/app/models"
@@ -62,6 +63,14 @@ func UsersCreate(c buffalo.Context) error {
 	// Bind user to the html form elements
 	if err := c.Bind(user); err != nil {
 		return err
+	}
+
+	err1 := validate.Validate(user)
+
+	for item := range err1.Errors {
+		c.Flash().Add("error", err1.Errors[item][0])
+		c.Set("user", user)
+		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/new.plush.html"))
 	}
 
 	user.Email = strings.ToLower(user.Email)
@@ -143,6 +152,25 @@ func UsersUpdate(c buffalo.Context) error {
 	// Bind User to the html form elements
 	if err := c.Bind(user); err != nil {
 		return err
+	}
+	err1 := validate.Validate(user)
+
+	if (user.Password != "" || user.PasswordConfirmation != "" && len(err1.Errors["password"]) == 1 && len(err1.Errors["password_confirmation"]) == 1 && len(err1.Errors["email"]) > 0 && len(err1.Errors["first_name"]) > 0 &&
+		len(err1.Errors["last_name"]) > 0) || (user.Password != "" || user.PasswordConfirmation != "") {
+		for item := range err1.Errors {
+
+			c.Flash().Add("error", err1.Errors[item][0])
+			c.Set("user", user)
+			return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/edit.plush.html"))
+		}
+	}
+	if user.Password != "" && user.PasswordConfirmation != "" {
+		hashPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+		user.PasswordHash = string(hashPass)
+
 	}
 
 	verrs, err := tx.ValidateAndUpdate(user)

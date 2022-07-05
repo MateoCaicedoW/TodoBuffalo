@@ -8,6 +8,7 @@ import (
 )
 
 func (ms *ModelSuite) Test_Create_Error() {
+
 	task := &Task{
 		Title: "Test Task",
 		Must:  time.Now(),
@@ -25,9 +26,16 @@ func (ms *ModelSuite) Test_Create_Error() {
 }
 
 func (ms *ModelSuite) Test_Create_Success() {
+	user := &User{}
+	fako.Fill(user)
+	err1 := ms.DB.Create(user)
+	ms.NoError(err1)
+
 	task := &Task{}
 	fako.Fill(task)
+	task.UserID = user.ID
 	vers, err := ms.DB.ValidateAndCreate(task)
+
 	ms.NoError(err)
 	ms.False(vers.HasAny())
 
