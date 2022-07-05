@@ -11,7 +11,8 @@
             <thead>
                 <tr class="top">
                     <th class="py-3"></th>
-                    <th class="py-3 fw-normal w-50">Task</th>
+                    <th class="py-3 fw-normal">Task</th>
+                    <th class="py-3 fw-normal ">User</th>
                     <th class="py-3 fw-normal">Must be to</th>
                     <th class="py-3 fw-normal text-center">Actions</th>
                 </tr>
@@ -33,6 +34,10 @@
                         </td>
                         <td class="py-3 text-info bi show-description">
                             <%= i.Title %>
+                        </td>
+                        <td class="py-3">
+                            <%= i.User.FirstName %>
+                            <%= i.User.LastName %>
                         </td>
                         <td class="py-3">
                             <%= i.Must.Format("2006-02-01") %>

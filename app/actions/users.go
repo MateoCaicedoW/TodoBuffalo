@@ -3,9 +3,11 @@ package actions
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
+	"golang.org/x/crypto/bcrypt"
 
 	"TodoBuffalo/app/models"
 )
@@ -39,35 +41,17 @@ func UsersList(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.HTML("/users/index.plush.html"))
 }
 
-// // Show gets the data for one User. This function is mapped to
-// // the path GET /users/{user_id}
-// func UsersShow(c buffalo.Context) error {
-// 	// Get the DB connection from the context
-// 	tx, ok := c.Value("tx").(*pop.Connection)
-// 	if !ok {
-// 		return fmt.Errorf("no transaction found")
-// 	}
-
-// 	// Allocate an empty User
-// 	user := &models.User{}
-
-// 	// To find the User the parameter user_id is used.
-// 	if err := tx.Find(user, c.Param("user_id")); err != nil {
-// 		return c.Error(http.StatusNotFound, err)
-// 	}
-
-// 	c.Set("user", user)
-
-// 	return c.Render(http.StatusOK, r.HTML("/users/show.plush.html"))
-// }
-
 // // New renders the form for creating a new User.
 // // This function is mapped to the path GET /users/new
-// func UsersNew(c buffalo.Context) error {
-// 	c.Set("user", &models.User{})
+func UsersShow(c buffalo.Context) error {
 
-// 	return c.Render(http.StatusOK, r.HTML("/users/new.plush.html"))
-// }
+	// Allocate an empty User
+	user := &models.User{}
+
+	c.Set("user", user)
+
+	return c.Render(http.StatusOK, r.HTML("/users/new.plush.html"))
+}
 
 // // Create adds a User to the DB. This function is mapped to the
 // // path POST /users
@@ -79,6 +63,15 @@ func UsersCreate(c buffalo.Context) error {
 	if err := c.Bind(user); err != nil {
 		return err
 	}
+
+	user.Email = strings.ToLower(user.Email)
+	hashPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.PasswordHash = string(hashPass)
+	user.FirstName = strings.ToLower(user.FirstName)
+	user.LastName = strings.ToLower(user.LastName)
 
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
@@ -110,95 +103,95 @@ func UsersCreate(c buffalo.Context) error {
 	return c.Redirect(http.StatusSeeOther, "/users")
 }
 
-// // Edit renders a edit form for a User. This function is
-// // mapped to the path GET /users/{user_id}/edit
-// func UsersEdit(c buffalo.Context) error {
-// 	// Get the DB connection from the context
-// 	tx, ok := c.Value("tx").(*pop.Connection)
-// 	if !ok {
-// 		return fmt.Errorf("no transaction found")
-// 	}
+// Edit renders a edit form for a User. This function is
+// mapped to the path GET /users/{user_id}/edit
+func UsersEdit(c buffalo.Context) error {
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
 
-// 	// Allocate an empty User
-// 	user := &models.User{}
+	// Allocate an empty User
+	user := &models.User{}
 
-// 	if err := tx.Find(user, c.Param("user_id")); err != nil {
-// 		return c.Error(http.StatusNotFound, err)
-// 	}
+	if err := tx.Find(user, c.Param("id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
 
-// 	c.Set("user", user)
+	c.Set("user", user)
 
-// 	return c.Render(http.StatusOK, r.HTML("/users/edit.plush.html"))
-// }
+	return c.Render(http.StatusOK, r.HTML("/users/edit.plush.html"))
+}
 
-// // Update changes a User in the DB. This function is mapped to
-// // the path PUT /users/{user_id}
-// func UsersUpdate(c buffalo.Context) error {
-// 	// Get the DB connection from the context
-// 	tx, ok := c.Value("tx").(*pop.Connection)
-// 	if !ok {
-// 		return fmt.Errorf("no transaction found")
-// 	}
+// Update changes a User in the DB. This function is mapped to
+// the path PUT /users/{user_id}
+func UsersUpdate(c buffalo.Context) error {
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
 
-// 	// Allocate an empty User
-// 	user := &models.User{}
+	// Allocate an empty User
+	user := &models.User{}
 
-// 	if err := tx.Find(user, c.Param("user_id")); err != nil {
-// 		return c.Error(http.StatusNotFound, err)
-// 	}
+	if err := tx.Find(user, c.Param("id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
 
-// 	// Bind User to the html form elements
-// 	if err := c.Bind(user); err != nil {
-// 		return err
-// 	}
+	// Bind User to the html form elements
+	if err := c.Bind(user); err != nil {
+		return err
+	}
 
-// 	verrs, err := tx.ValidateAndUpdate(user)
-// 	if err != nil {
-// 		return err
-// 	}
+	verrs, err := tx.ValidateAndUpdate(user)
+	if err != nil {
+		return err
+	}
 
-// 	if verrs.HasAny() {
-// 		// Make the errors available inside the html template
-// 		c.Set("errors", verrs)
+	if verrs.HasAny() {
+		// Make the errors available inside the html template
+		c.Set("errors", verrs)
 
-// 		// Render again the edit.html template that the user can
-// 		// correct the input.
-// 		c.Set("user", user)
+		// Render again the edit.html template that the user can
+		// correct the input.
+		c.Set("user", user)
 
-// 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/edit.plush.html"))
-// 	}
+		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/edit.plush.html"))
+	}
 
-// 	// If there are no errors set a success message
-// 	c.Flash().Add("success", "user.updated.success")
+	// If there are no errors set a success message
+	c.Flash().Add("success", "User updated successfully")
 
-// 	// and redirect to the show page
-// 	return c.Redirect(http.StatusSeeOther, "userPath()", render.Data{"user_id": user.ID})
-// }
+	// and redirect to the show page
+	return c.Redirect(http.StatusSeeOther, "/users")
+}
 
-// // Destroy deletes a User from the DB. This function is mapped
-// // to the path DELETE /users/{user_id}
-// func UsersDestroy(c buffalo.Context) error {
-// 	// Get the DB connection from the context
-// 	tx, ok := c.Value("tx").(*pop.Connection)
-// 	if !ok {
-// 		return fmt.Errorf("no transaction found")
-// 	}
+// Destroy deletes a User from the DB. This function is mapped
+// to the path DELETE /users/{user_id}
+func UsersDestroy(c buffalo.Context) error {
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
 
-// 	// Allocate an empty User
-// 	user := &models.User{}
+	// Allocate an empty User
+	user := &models.User{}
 
-// 	// To find the User the parameter user_id is used.
-// 	if err := tx.Find(user, c.Param("user_id")); err != nil {
-// 		return c.Error(http.StatusNotFound, err)
-// 	}
+	// To find the User the parameter user_id is used.
+	if err := tx.Find(user, c.Param("id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
 
-// 	if err := tx.Destroy(user); err != nil {
-// 		return err
-// 	}
+	if err := tx.Destroy(user); err != nil {
+		return err
+	}
 
-// 	// If there are no errors set a flash message
-// 	c.Flash().Add("success", "user.destroyed.success")
+	// If there are no errors set a flash message
+	c.Flash().Add("success", "User deleted successfully")
 
-// 	// Redirect to the index page
-// 	return c.Redirect(http.StatusSeeOther, "usersPath()")
-// }
+	// Redirect to the index page
+	return c.Redirect(http.StatusSeeOther, "/users")
+}

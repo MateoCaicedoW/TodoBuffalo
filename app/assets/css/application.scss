@@ -16,10 +16,7 @@ body{
 .head{
     background-color:rgb(101, 176, 206);
 }
-.text-todo{
-    border-right: 2px solid white;
-    
-}
+
 .day{
     font-size: 12px;
 }
@@ -122,6 +119,13 @@ table tbody{
     color: green !important;
 }
 
+.custom-active{
+    color:rgb(100, 102, 103) !important;
+}
+
+.nav-link:hover{
+    color:rgb(100, 102, 103)  !important;
+}
 @media (max-width: 802px) {
     #text-left{
         display: flex;

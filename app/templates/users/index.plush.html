@@ -2,7 +2,7 @@
     
     <div class="d-flex justify-content-end  ">
        
-        <a href="/user/new"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
+        <a href="/users/new"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
                 User</button>
         </a>
     </div>
@@ -27,6 +27,7 @@
                         <td class="py-3 text-info bi show-description">
                             <%= i.FirstName %>
                         </td>
+                        
                         <td class="py-3">
                             <%= i.LastName %>
                         </td>
@@ -35,7 +36,7 @@
                         </td>
 
                         <td class="d-flex py-4  justify-content-center align-items-center">
-                            <a href="/edit/<%=i.ID%>">
+                            <a href="/users/edit/<%=i.ID%>">
                                 <button type="button" class="btn btn-success ms-2 submit"><i
                                         class="fas fa-edit"></i></button>
                             </a>

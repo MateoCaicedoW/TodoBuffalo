@@ -1,8 +1,9 @@
-<div class="py-4 mb-2">
-  	<h3 class="d-inline-block">New User</h3>
-</div>
-
-<%= formFor(user, {action: usersPath(), method: "POST"}) { %>
-	<%= partial("users/form.html") %>
-	<%= linkTo(usersPath(), {class: "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
-<% } %>
+<section id="new-task" class="px-5 bg-white m-auto py-4 w-50 rounded-1 shadow-sm">
+	<div class="py-4 mb-2">
+		<h3 class="d-inline-block">New User</h3>
+  </div>
+  
+  <%= form_for(user, {action: "/users/new/", method: "POST"}) { %>
+	  <%= partial("users/form.plush.html") %>
+  <% } %>
+</section>

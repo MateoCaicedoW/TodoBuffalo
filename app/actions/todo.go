@@ -14,20 +14,14 @@ import (
 func Index(c buffalo.Context) error {
 	tasks := []models.Task{}
 	tx := c.Value("tx").(*pop.Connection)
-	// if err := models.DB().All(&tasks); err != nil {
-	// 	return err
-	// }
-
-	// q := models.DB().Paginate(1, 10).Order("created_at desc")
-	// q.All(&tasks)
-	// fmt.Println(q.Paginator.TotalPages)
 
 	q := tx.PaginateFromParams(c.Params())
 	q = q.Order("created_at desc")
 
-	if err := q.All(&tasks); err != nil {
+	if err := q.Eager().All(&tasks); err != nil {
 		return err
 	}
+
 	c.Set("tasks", tasks)
 	c.Set("pagination", q.Paginator)
 
@@ -35,43 +29,67 @@ func Index(c buffalo.Context) error {
 }
 
 func New(c buffalo.Context) error {
+	users := []models.User{}
+	tx := c.Value("tx").(*pop.Connection)
 	var task models.Task
 	task.Must = time.Now()
+	if err := tx.All(&users); err != nil {
+		return err
+	}
 
+	c.Set("users", users)
 	c.Set("task", task)
 	return c.Render(http.StatusOK, r.HTML("todo/new.plush.html"))
 }
+
 func Create(c buffalo.Context) error {
+
 	tx := c.Value("tx").(*pop.Connection)
-	task := &models.Task{}
+	task := &models.Task{
+		User: &models.User{},
+	}
+
 	if err := c.Bind(task); err != nil {
-		return err
-	}
-	task.Status = false
-	err := validate.Validate(task)
-	for item := range err.Errors {
-		c.Flash().Add("error", err.Errors[item][0])
-		c.Set("task", task)
-		return c.Render(http.StatusBadRequest, r.HTML("todo/new.plush.html"))
-	}
-	if err := tx.Create(task); err != nil {
 
 		return err
 	}
+	task.Status = false
+
+	err := validate.Validate(task)
+
+	for item := range err.Errors {
+		c.Flash().Add("error", err.Errors[item][0])
+		c.Set("task", task)
+		users := []models.User{}
+		if err := tx.All(&users); err != nil {
+			return err
+		}
+
+		c.Set("users", users)
+		return c.Render(http.StatusBadRequest, r.HTML("todo/new.plush.html"))
+	}
+	if err := tx.Eager().Create(task); err != nil {
+		return err
+	}
+
 	c.Flash().Add("success", "Record was successfully created!")
 	return c.Redirect(http.StatusSeeOther, "/")
 }
 
 func Edit(c buffalo.Context) error {
+	users := []models.User{}
+	tx := c.Value("tx").(*pop.Connection)
 	var task models.Task
 	id := c.Param("id")
 	task.ID = uuid.FromStringOrNil(id)
-	if err := models.DB().Find(&task, id); err != nil {
+	if err := tx.Eager().Find(&task, id); err != nil {
 		return err
 	}
-
+	if err := tx.All(&users); err != nil {
+		return err
+	}
+	c.Set("users", users)
 	c.Set("task", task)
-
 	return c.Render(http.StatusOK, r.HTML("todo/edit.plush.html"))
 }
 
@@ -92,7 +110,7 @@ func Update(c buffalo.Context) error {
 		return c.Render(http.StatusBadRequest, r.HTML("todo/edit.plush.html"))
 	}
 
-	if err := tx.Update(taskTemp); err != nil {
+	if err := tx.Eager().Update(taskTemp); err != nil {
 		return err
 	}
 
@@ -106,7 +124,7 @@ func Delete(c buffalo.Context) error {
 	id := c.Param("id")
 	taskTemp.ID = uuid.FromStringOrNil(id)
 
-	if err := tx.Destroy(taskTemp); err != nil {
+	if err := tx.Eager().Destroy(taskTemp); err != nil {
 		return err
 	}
 	c.Flash().Add("success", "Record was successfully deleted!")
@@ -118,11 +136,11 @@ func Status(c buffalo.Context) error {
 	taskTemp := &models.Task{}
 	id := c.Param("id")
 	taskTemp.ID = uuid.FromStringOrNil(id)
-	if err := tx.Find(taskTemp, id); err != nil {
+	if err := tx.Eager().Find(taskTemp, id); err != nil {
 		return err
 	}
 	taskTemp.Status = !taskTemp.Status
-	if err := tx.Update(taskTemp); err != nil {
+	if err := tx.Eager().Update(taskTemp); err != nil {
 		return err
 	}
 	if taskTemp.Status {
