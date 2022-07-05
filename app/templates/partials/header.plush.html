@@ -17,8 +17,8 @@
                     <div class="navbar-nav">
 
                        
-                        <a  class="nav-link text-white" href="/">Tasks</a>
-                        <a  class="nav-link text-white" href="/users">Users</a>
+                        <a  class=" nav-link text-white  <%= if(url == "/" ) {%>  custom-active <% }%>"  href="/">Tasks</a>
+                        <a  class="nav-link text-white  <%= if(url == "/users/" ) {%>  custom-active <% }%>" href="/users">Users</a>
                     </div>
                 </div>
             </div>

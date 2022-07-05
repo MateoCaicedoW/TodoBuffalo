@@ -34,7 +34,9 @@ func UsersList(c buffalo.Context) error {
 	if err := q.All(&users); err != nil {
 		return err
 	}
-
+	url := c.Request().URL.String()
+	fmt.Println(url)
+	c.Set("url", url)
 	// Add the paginator to the context so it can be used in the template.
 	c.Set("pagination", q.Paginator)
 	c.Set("users", users)

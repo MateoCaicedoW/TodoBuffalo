@@ -2,6 +2,7 @@ package actions
 
 import (
 	"TodoBuffalo/app/models"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -25,6 +26,9 @@ func Index(c buffalo.Context) error {
 	c.Set("tasks", tasks)
 	c.Set("pagination", q.Paginator)
 
+	url := c.Request().URL.String()
+	fmt.Println(url)
+	c.Set("url", url)
 	return c.Render(http.StatusOK, r.HTML("todo/index.plush.html"))
 }
 
