@@ -5,6 +5,7 @@ import (
 	"TodoBuffalo/public"
 
 	"github.com/gobuffalo/buffalo/render"
+	"github.com/gobuffalo/plush/v4"
 	"github.com/wawandco/ox/pkg/buffalotools"
 )
 
@@ -25,4 +26,17 @@ var Helpers = map[string]interface{}{
 	// partialFeeder is the helper used by the render engine
 	// to find the partials that will be used, this is important
 	"partialFeeder": buffalotools.NewPartialFeeder(templates.FS()),
+	"isActive":      isActive,
+}
+
+func isActive(name string, c plush.HelperContext) string {
+
+	if cr, ok := c.Value("current_path").(string); ok {
+
+		if cr == name {
+			return "custom-active"
+		}
+	}
+
+	return ""
 }

@@ -7,7 +7,6 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
-	"github.com/gobuffalo/validate/v3"
 	"golang.org/x/crypto/bcrypt"
 
 	"TodoBuffalo/app/models"
@@ -34,9 +33,7 @@ func UsersList(c buffalo.Context) error {
 	if err := q.All(&users); err != nil {
 		return err
 	}
-	url := c.Request().URL.String()
-	fmt.Println(url)
-	c.Set("url", url)
+
 	// Add the paginator to the context so it can be used in the template.
 	c.Set("pagination", q.Paginator)
 	c.Set("users", users)
@@ -66,11 +63,15 @@ func UsersCreate(c buffalo.Context) error {
 	if err := c.Bind(user); err != nil {
 		return err
 	}
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
 
-	err1 := validate.Validate(user)
+	// Validate the form input
 
-	for item := range err1.Errors {
-		c.Flash().Add("error", err1.Errors[item][0])
+	if verrs, _ := user.Validate(tx, c); verrs.HasAny() {
+		c.Set("errors", verrs)
 		c.Set("user", user)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/new.plush.html"))
 	}
@@ -85,26 +86,11 @@ func UsersCreate(c buffalo.Context) error {
 	user.LastName = strings.ToLower(user.LastName)
 
 	// Get the DB connection from the context
-	tx, ok := c.Value("tx").(*pop.Connection)
-	if !ok {
-		return fmt.Errorf("no transaction found")
-	}
 
 	// Validate the data from the html form
-	verrs, err := tx.ValidateAndCreate(user)
-	if err != nil {
-		return err
-	}
-
-	if verrs.HasAny() {
-		// Make the errors available inside the html template
-		c.Set("errors", verrs)
-
-		// Render again the new.html template that the user can
-		// correct the input.
-		c.Set("user", user)
-
-		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/new.plush.html"))
+	err2 := tx.Create(user)
+	if err2 != nil {
+		return err2
 	}
 
 	// If there are no errors set a success message
@@ -155,40 +141,19 @@ func UsersUpdate(c buffalo.Context) error {
 	if err := c.Bind(user); err != nil {
 		return err
 	}
-	err1 := validate.Validate(user)
-
-	if (user.Password != "" || user.PasswordConfirmation != "" && len(err1.Errors["password"]) == 1 && len(err1.Errors["password_confirmation"]) == 1 && len(err1.Errors["email"]) > 0 && len(err1.Errors["first_name"]) > 0 &&
-		len(err1.Errors["last_name"]) > 0) || (user.Password != "" || user.PasswordConfirmation != "") {
-		for item := range err1.Errors {
-
-			c.Flash().Add("error", err1.Errors[item][0])
-			c.Set("user", user)
-			return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/edit.plush.html"))
-		}
-	}
-	if user.Password != "" && user.PasswordConfirmation != "" {
-		hashPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-		if err != nil {
-			return err
-		}
-		user.PasswordHash = string(hashPass)
-
-	}
-
-	verrs, err := tx.ValidateAndUpdate(user)
-	if err != nil {
-		return err
-	}
-
-	if verrs.HasAny() {
-		// Make the errors available inside the html template
+	if verrs, _ := user.Validate(tx, c); verrs.HasAny() {
 		c.Set("errors", verrs)
-
-		// Render again the edit.html template that the user can
-		// correct the input.
 		c.Set("user", user)
-
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/edit.plush.html"))
+	}
+
+	userTemp := &models.User{}
+	if err := tx.Find(userTemp, c.Param("id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	if err := tx.Update(user); err != nil {
+		return err
 	}
 
 	// If there are no errors set a success message

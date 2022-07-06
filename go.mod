@@ -15,6 +15,8 @@ require (
 	github.com/wawandco/ox v0.12.3
 )
 
+require github.com/serenize/snaker v0.0.0-20171204205717-a683aaf2d516 // indirect
+
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
@@ -38,6 +40,7 @@ require (
 	github.com/gobuffalo/nulls v0.4.1 // indirect
 	github.com/gobuffalo/plush/v4 v4.1.10 // indirect
 	github.com/gobuffalo/tags/v3 v3.1.2 // indirect
+	github.com/gobuffalo/validate v2.0.4+incompatible
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
