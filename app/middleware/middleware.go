@@ -4,9 +4,15 @@ package middleware
 
 import (
 	"TodoBuffalo/app/models"
+	"database/sql"
+	"net/http"
 
+	"github.com/gobuffalo/buffalo"
 	csrf "github.com/gobuffalo/mw-csrf"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
+	"github.com/gobuffalo/pop/v6"
+
+	"github.com/markbates/errx"
 	"github.com/wawandco/ox/pkg/buffalotools"
 )
 
@@ -27,3 +33,33 @@ var (
 	// CSRF middleware protects from CSRF attacks.
 	CSRF = csrf.New
 )
+
+func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+		if uid := c.Session().Get("current_user_id"); uid != nil {
+			u := &models.User{}
+			tx := c.Value("tx").(*pop.Connection)
+			err := tx.Find(u, uid)
+			if err != nil {
+				c.Session().Clear()
+				if errx.Unwrap(err) == sql.ErrNoRows {
+					return c.Redirect(http.StatusSeeOther, "/")
+				}
+				return err
+			}
+			c.Set("current_user", u)
+		}
+		return next(c)
+	}
+}
+
+// Authorize require a user be logged in before accessing a route
+func Authorize(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+		if uid := c.Session().Get("current_user_id"); uid == nil {
+
+			return c.Redirect(http.StatusSeeOther, "/")
+		}
+		return next(c)
+	}
+}

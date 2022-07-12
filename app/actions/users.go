@@ -1,14 +1,12 @@
 package actions
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
-	"github.com/markbates/errx"
 	"golang.org/x/crypto/bcrypt"
 
 	"TodoBuffalo/app/models"
@@ -200,34 +198,4 @@ func UsersDestroy(c buffalo.Context) error {
 
 	// Redirect to the index page
 	return c.Redirect(http.StatusSeeOther, "/users")
-}
-
-func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
-	return func(c buffalo.Context) error {
-		if uid := c.Session().Get("current_user_id"); uid != nil {
-			u := &models.User{}
-			tx := c.Value("tx").(*pop.Connection)
-			err := tx.Find(u, uid)
-			if err != nil {
-				c.Session().Clear()
-				if errx.Unwrap(err) == sql.ErrNoRows {
-					return c.Redirect(http.StatusSeeOther, "/")
-				}
-				return err
-			}
-			c.Set("current_user", u)
-		}
-		return next(c)
-	}
-}
-
-// Authorize require a user be logged in before accessing a route
-func Authorize(next buffalo.Handler) buffalo.Handler {
-	return func(c buffalo.Context) error {
-		if uid := c.Session().Get("current_user_id"); uid == nil {
-
-			return c.Redirect(http.StatusSeeOther, "/")
-		}
-		return next(c)
-	}
 }

@@ -36,7 +36,18 @@ func (t *Task) Validate() (*validate.Errors, error) {
 			Name:    "UserID",
 			Message: "%s User can't be blank.",
 		},
-		&validators.StringIsPresent{Field: t.Must.String(), Name: "Must"},
+		&validators.TimeIsPresent{Field: t.Must, Name: "Must"},
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if t.Must.Before(time.Now()) {
+					return false
+				}
+				return true
+			},
+			Field:   "",
+			Name:    "Must",
+			Message: "%s Must be a future date.",
+		},
 	), nil
 
 }

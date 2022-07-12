@@ -12,5 +12,5 @@ func HomeHandler(c buffalo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/todo")
 	}
 	c.Set("user", models.User{})
-	return c.Render(http.StatusOK, r.HTML("index.plush.html"))
+	return c.Redirect(http.StatusSeeOther, "/signin")
 }

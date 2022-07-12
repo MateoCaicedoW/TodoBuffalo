@@ -46,6 +46,7 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 		},
 		&validators.FuncValidator{
 			Fn: func() bool {
+
 				if (c.Request().URL.String() == "/users/new/" || c.Request().URL.String() != "/users/new/") && len(u.Password) > 0 {
 					if u.Password != u.PasswordConfirmation {
 						return false
@@ -89,6 +90,12 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 		},
 
 		&validators.EmailIsPresent{Name: "Email", Field: u.Email},
+		&validators.RegexMatch{
+			Field:   u.Email,
+			Name:    "Email",
+			Expr:    `^[\w\.]+@([\w-]+\.)+[\w-]{2,4}$`,
+			Message: "Email is invalid",
+		},
 	), nil
 }
 
