@@ -1,8 +1,10 @@
+
+
 <section class="layout-add d-flex flex-column">
     
     <div class="d-flex justify-content-end  ">
        
-        <a href="/new"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
+        <a href="<%= newTodoPath() %>"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
                 Task</button>
         </a>
     </div>
@@ -12,7 +14,6 @@
                 <tr class="top">
                     <th class="py-3"></th>
                     <th class="py-3 fw-normal">Task</th>
-                    <th class="py-3 fw-normal ">User</th>
                     <th class="py-3 fw-normal">Must be to</th>
                     <th class="py-3 fw-normal text-center">Actions</th>
                 </tr>
@@ -22,7 +23,7 @@
                 <%= for (i) in tasks { %>
                     <tr>
                         <td class="py-3 text-center px-0">
-                            <%= form({action: "/status/" +i.ID ,method:"PUT", id:"form-status"}) { %>
+                            <%= form({action: "/todo/status/" +i.ID ,method:"PUT", id:"form-status"}) { %>
                                 <%= if (i.Status == true)  {%>
                                     <button class="btn p-0" type="submit"> <i class="fa-solid fa-ban"></i></button>
                                 <% } else { %>
@@ -35,19 +36,16 @@
                         <td class="py-3 text-info bi show-description">
                             <%= i.Title %>
                         </td>
-                        <td class="py-3">
-                            <%= i.User.FirstName %>
-                            <%= i.User.LastName %>
-                        </td>
+                       
                         <td class="py-3">
                             <%= i.Must.Format("2006-02-01") %>
                         </td>
                         <td class="d-flex py-4  justify-content-center align-items-center">
-                            <a href="/edit/<%=i.ID%>">
+                            <a href="<%= todoPath({todo_id: i.ID})%> ">
                                 <button type="button" class="btn btn-success ms-2 submit"><i
                                         class="fas fa-edit"></i></button>
                             </a>
-                            <%= form({action: "/delete/" +i.ID ,method:"DELETE"}) { %>
+                            <%= form({action: todoPath({todo_id: i.ID}) ,method:"DELETE"}) { %>
                                     <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>"><i
                                         class="far fa-trash-alt "></i></button>
                                         <%= partial("todo/modal.plush.html", {ID : i.ID}) %>

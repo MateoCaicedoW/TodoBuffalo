@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 
 	"github.com/gobuffalo/buffalo"
@@ -8,6 +9,7 @@ import (
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gobuffalo/validate/v3/validators"
 	"github.com/gofrs/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -88,4 +90,22 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 
 		&validators.EmailIsPresent{Name: "Email", Field: u.Email},
 	), nil
+}
+
+func (u *User) Create(tx *pop.Connection) (*validate.Errors, error) {
+	u.Email = strings.ToLower(u.Email)
+	ph, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return validate.NewErrors(), err
+	}
+	u.PasswordHash = string(ph)
+	return tx.ValidateAndCreate(u)
+}
+
+func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
+	var err error
+	return validate.Validate(
+		&validators.StringIsPresent{Field: u.Password, Name: "Password"},
+		&validators.StringsMatch{Name: "Password", Field: u.Password, Field2: u.PasswordConfirmation, Message: "Password does not match confirmation"},
+	), err
 }

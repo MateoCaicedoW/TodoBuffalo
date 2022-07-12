@@ -106,6 +106,8 @@ table tbody{
 
 }
 
+
+
 .page-link{
     position: static !important;
     color: rgb(101, 176, 206) !important;
@@ -126,6 +128,25 @@ table tbody{
 .nav-link:hover{
     color:rgb(100, 102, 103)  !important;
 }
+
+
+.login-content{
+    width: 100%;
+}
+
+.container-login, .new-user-container{
+    /* centrar vertical y horizontalmente */
+    width: 400px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+}
+.new-user-container{
+    width: auto;
+}
+
 @media (max-width: 802px) {
     #text-left{
         display: flex;

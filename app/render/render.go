@@ -26,17 +26,14 @@ var Helpers = map[string]interface{}{
 	// partialFeeder is the helper used by the render engine
 	// to find the partials that will be used, this is important
 	"partialFeeder": buffalotools.NewPartialFeeder(templates.FS()),
-	"isActive":      isActive,
+	"currentUser":   currentUser,
 }
 
-func isActive(name string, c plush.HelperContext) string {
+func currentUser(c plush.HelperContext) bool {
 
-	if cr, ok := c.Value("current_path").(string); ok {
-
-		if cr == name {
-			return "custom-active"
-		}
+	if c.Value("current_user") != nil {
+		return true
 	}
 
-	return ""
+	return false
 }

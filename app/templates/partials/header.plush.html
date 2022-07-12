@@ -8,6 +8,8 @@
                         ToDo List
                     </h2>
                 </div>
+              
+          
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -15,9 +17,17 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        
-                        <a  class=" nav-link text-white  <%= isActive("/") %>"  href="/">Tasks</a>
-                        <a  class="nav-link text-white  <%= isActive("/users/")%>" href="/users">Users</a>
+                        <%= if (currentUser()) { %>
+                            <a  class=" nav-link text-white "  href="/">Tasks</a>
+                       
+                            <%= form({action: signoutPath(),method:"DELETE"}) { %>
+                                <button class="btn text-white" type="submit"> Singout</button>
+                                    <% } %>
+                               
+                             <% } %> 
+                        <% } %>
+                       
+                    
                     </div>
                 </div>
             </div>

@@ -3,7 +3,6 @@ package models
 import (
 	"time"
 
-	"github.com/gobuffalo/validate/v3"
 	"github.com/wawandco/fako"
 )
 
@@ -14,7 +13,7 @@ func (ms *ModelSuite) Test_Create_Error() {
 		Must:  time.Now(),
 	}
 
-	err := validate.Validate(task)
+	err, _ := task.Validate()
 	ms.Error(err)
 	ms.True(err.HasAny())
 

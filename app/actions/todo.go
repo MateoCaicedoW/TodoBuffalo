@@ -7,18 +7,23 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
-	"github.com/gobuffalo/validate/v3"
 	"github.com/gofrs/uuid"
 )
 
-func Index(c buffalo.Context) error {
+type TodoResource struct {
+	buffalo.Resource
+}
+
+func (t TodoResource) List(c buffalo.Context) error {
 	tasks := []models.Task{}
+
 	tx := c.Value("tx").(*pop.Connection)
 
 	q := tx.PaginateFromParams(c.Params())
 	q = q.Order("created_at desc")
 
-	if err := q.Eager().All(&tasks); err != nil {
+	u := c.Value("current_user").(*models.User)
+	if err := q.Eager().Where("user_id = ?", u.ID).All(&tasks); err != nil {
 		return err
 	}
 
@@ -28,7 +33,7 @@ func Index(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.HTML("todo/index.plush.html"))
 }
 
-func New(c buffalo.Context) error {
+func (t TodoResource) New(c buffalo.Context) error {
 	users := []models.User{}
 	tx := c.Value("tx").(*pop.Connection)
 	var task models.Task
@@ -37,13 +42,12 @@ func New(c buffalo.Context) error {
 		return err
 	}
 
-	c.Set("users", users)
 	c.Set("task", task)
 
 	return c.Render(http.StatusOK, r.HTML("todo/new.plush.html"))
 }
 
-func Create(c buffalo.Context) error {
+func (t TodoResource) Create(c buffalo.Context) error {
 
 	tx := c.Value("tx").(*pop.Connection)
 	task := &models.Task{
@@ -55,20 +59,23 @@ func Create(c buffalo.Context) error {
 		return err
 	}
 	task.Status = false
+	user := c.Value("current_user").(*models.User)
+	task.User = user
+	task.UserID = user.ID
 
-	err := validate.Validate(task)
-
-	for item := range err.Errors {
-		c.Flash().Add("error", err.Errors[item][0])
+	if verrs, _ := task.Validate(); verrs.HasAny() {
 		c.Set("task", task)
 		users := []models.User{}
 		if err := tx.All(&users); err != nil {
 			return err
 		}
+		// create map of users
 
-		c.Set("users", users)
-		return c.Render(http.StatusBadRequest, r.HTML("todo/new.plush.html"))
+		c.Set("errors", verrs.Errors)
+
+		return c.Render(http.StatusUnprocessableEntity, r.HTML("todo/new.plush.html"))
 	}
+
 	if err := tx.Eager().Create(task); err != nil {
 		return err
 	}
@@ -77,65 +84,64 @@ func Create(c buffalo.Context) error {
 	return c.Redirect(http.StatusSeeOther, "/")
 }
 
-func Edit(c buffalo.Context) error {
-	users := []models.User{}
+func (t TodoResource) Show(c buffalo.Context) error {
+
 	tx := c.Value("tx").(*pop.Connection)
 	var task models.Task
-	id := c.Param("id")
+	id := c.Param("todo_id")
+
 	task.ID = uuid.FromStringOrNil(id)
 	if err := tx.Eager().Find(&task, id); err != nil {
 		return err
 	}
-	if err := tx.All(&users); err != nil {
-		return err
-	}
-	c.Set("users", users)
+
 	c.Set("task", task)
 	return c.Render(http.StatusOK, r.HTML("todo/edit.plush.html"))
 }
 
-func Update(c buffalo.Context) error {
+func (t TodoResource) Update(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	taskTemp := &models.Task{}
-	id := c.Param("id")
+	id := c.Param("todo_id")
 	taskTemp.ID = uuid.FromStringOrNil(id)
 	if err := c.Bind(taskTemp); err != nil {
 		return err
 	}
+	user := c.Value("current_user").(*models.User)
+	taskTemp.User = user
+	taskTemp.UserID = user.ID
 
-	err := validate.Validate(taskTemp)
-
-	for item := range err.Errors {
-		c.Flash().Add("error", err.Errors[item][0])
+	if verrs, _ := taskTemp.Validate(); verrs.HasAny() {
 		c.Set("task", taskTemp)
-		return c.Render(http.StatusBadRequest, r.HTML("todo/edit.plush.html"))
-	}
+		c.Set("errors", verrs.Errors)
 
+		return c.Render(http.StatusUnprocessableEntity, r.HTML("todo/edit.plush.html"))
+	}
 	if err := tx.Eager().Update(taskTemp); err != nil {
 		return err
 	}
 
 	c.Flash().Add("success", "Record was successfully updated!")
-	return c.Redirect(http.StatusSeeOther, "/")
+	return c.Redirect(http.StatusSeeOther, "/todo")
 }
 
-func Delete(c buffalo.Context) error {
+func (t TodoResource) Destroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	taskTemp := &models.Task{}
-	id := c.Param("id")
+	id := c.Param("todo_id")
 	taskTemp.ID = uuid.FromStringOrNil(id)
 
 	if err := tx.Eager().Destroy(taskTemp); err != nil {
 		return err
 	}
 	c.Flash().Add("success", "Record was successfully deleted!")
-	return c.Redirect(http.StatusSeeOther, "/")
+	return c.Redirect(http.StatusSeeOther, "/todo")
 }
 
 func Status(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	taskTemp := &models.Task{}
-	id := c.Param("id")
+	id := c.Param("todo_id")
 	taskTemp.ID = uuid.FromStringOrNil(id)
 	if err := tx.Eager().Find(taskTemp, id); err != nil {
 		return err

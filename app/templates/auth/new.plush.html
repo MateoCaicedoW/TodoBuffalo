@@ -1,0 +1,22 @@
+
+<div class="container-login">
+  <div class="rounded-3 p-4 login-content  shadow-sm">
+    <h4>Log In</h4>
+    <%= form_for(user, {action: signinPath()}) { %>
+      <div class="mb-2">
+        <%= f.InputTag("Email") %>
+      </div>
+      <div class="mb-2">
+        <%= f.InputTag("Password", {type: "password"}) %>
+      </div>
+      <div class="d-flex mb-2 pt-2  gap-3">
+        <button type="submit" class="btn btn-primary  px-4 py-2 ">Sign In</button>
+        <a href="<%= newUsersPath()%>"><button type="button"
+          class="btn btn-light px-4 py-2  ">Sign Up </button></a>
+      </div>
+     
+    <% } %>
+  </div>
+</div>
+
+

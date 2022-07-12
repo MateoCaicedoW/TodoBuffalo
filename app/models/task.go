@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gobuffalo/validate/v3"
+	"github.com/gobuffalo/validate/v3/validators"
 	"github.com/gofrs/uuid"
 )
 
@@ -19,18 +20,23 @@ type Task struct {
 	User        *User     `belongs_to:"users"`
 }
 
-func (task *Task) IsValid(errors *validate.Errors) {
-	if task.Title == "" {
-		errors.Add("title", "Title must not be empty")
-	}
-	if task.Description == "" {
-		errors.Add("description", "Description must not be empty")
-	}
-	if task.Must.String() == "" {
-		errors.Add("must", "Must must not be empty")
-	}
-	if task.UserID == uuid.Nil {
-		errors.Add("user_id", "User must not be empty")
-	}
+func (t *Task) Validate() (*validate.Errors, error) {
+
+	return validate.Validate(
+		&validators.StringIsPresent{Field: t.Title, Name: "Title"},
+		&validators.StringIsPresent{Field: t.Description, Name: "Description"},
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if t.UserID == uuid.Nil {
+					return false
+				}
+				return true
+			},
+			Field:   "",
+			Name:    "UserID",
+			Message: "%s User can't be blank.",
+		},
+		&validators.StringIsPresent{Field: t.Must.String(), Name: "Must"},
+	), nil
 
 }

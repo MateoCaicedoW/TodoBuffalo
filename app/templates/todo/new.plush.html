@@ -3,7 +3,7 @@
         New Task
     </p>
 
-    <%= form_for(task, {action: "/new", method: "POST"}) { %>
+    <%= form_for(task, {action: "/todo", method: "POST"}) { %>
     <%= partial("todo/form.plush.html") %>
     <% } %>
 </section>

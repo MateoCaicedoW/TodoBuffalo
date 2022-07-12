@@ -1,12 +1,14 @@
 package actions
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
+	"github.com/markbates/errx"
 	"golang.org/x/crypto/bcrypt"
 
 	"TodoBuffalo/app/models"
@@ -18,6 +20,9 @@ import (
 // GET /users
 func UsersList(c buffalo.Context) error {
 	// Get the DB connection from the context
+	if c.Value("current_user") != nil {
+		return c.Redirect(http.StatusSeeOther, "/todo")
+	}
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
 		return fmt.Errorf("no transaction found")
@@ -44,7 +49,9 @@ func UsersList(c buffalo.Context) error {
 // // New renders the form for creating a new User.
 // // This function is mapped to the path GET /users/new
 func UsersShow(c buffalo.Context) error {
-
+	if c.Value("current_user") != nil {
+		return c.Redirect(http.StatusSeeOther, "/todo")
+	}
 	// Allocate an empty User
 	user := &models.User{}
 
@@ -56,6 +63,7 @@ func UsersShow(c buffalo.Context) error {
 // // Create adds a User to the DB. This function is mapped to the
 // // path POST /users
 func UsersCreate(c buffalo.Context) error {
+
 	// Allocate an empty User
 	user := &models.User{}
 
@@ -97,12 +105,15 @@ func UsersCreate(c buffalo.Context) error {
 	c.Flash().Add("success", "User created successfully")
 
 	// and redirect to the show page
-	return c.Redirect(http.StatusSeeOther, "/users")
+	return c.Redirect(http.StatusSeeOther, "/signin")
 }
 
 // Edit renders a edit form for a User. This function is
 // mapped to the path GET /users/{user_id}/edit
 func UsersEdit(c buffalo.Context) error {
+	if c.Value("current_user") != nil {
+		return c.Redirect(http.StatusSeeOther, "/todo")
+	}
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
@@ -189,4 +200,34 @@ func UsersDestroy(c buffalo.Context) error {
 
 	// Redirect to the index page
 	return c.Redirect(http.StatusSeeOther, "/users")
+}
+
+func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+		if uid := c.Session().Get("current_user_id"); uid != nil {
+			u := &models.User{}
+			tx := c.Value("tx").(*pop.Connection)
+			err := tx.Find(u, uid)
+			if err != nil {
+				c.Session().Clear()
+				if errx.Unwrap(err) == sql.ErrNoRows {
+					return c.Redirect(http.StatusSeeOther, "/")
+				}
+				return err
+			}
+			c.Set("current_user", u)
+		}
+		return next(c)
+	}
+}
+
+// Authorize require a user be logged in before accessing a route
+func Authorize(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+		if uid := c.Session().Get("current_user_id"); uid == nil {
+
+			return c.Redirect(http.StatusSeeOther, "/")
+		}
+		return next(c)
+	}
 }

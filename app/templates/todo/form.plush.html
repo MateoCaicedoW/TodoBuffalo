@@ -7,27 +7,13 @@
     <div class="col-md-6">
         <%= f.InputTag("Must", {type: "date" , class: "form-control" }) %>
     </div>
-    <div class="row pe-0 mt-2">
-        <div class="col pe-0">
-
-            <label for="form-select-user" class="mb-2"> User</label>
-            <select class="form-select" id="form-select-user" aria-label="Default select example">
-                <option selected>Open this select menu</option>
-                <%= for (item) in users { %>
-                    <option value="<%=item.ID%>"><%=item.FirstName%> <%=item.LastName%> </option>
-                    
-                <% } %>
-            </select>
-            <%= f.InputTag("UserID", {type:"hidden"}) %>
-        </div>
-    </div>
  
     <div class="col mt-2">
         <%= f.TextArea("Description", {rows:10}) %>
     </div>
 
     <div class="d-flex justify-content-end buttons pt-4">
-        <a href="/"><button type="button"
+        <a href="/todo"><button type="button"
                 class="btn btn-light px-4 py-2 me-sm-3 justify-content-end btn-cancel">Cancel</button></a>
         <button type="submit" class="btn btn-primary px-4 py-2 mb-3 mb-sm-0 justify-content-end btn-add">Submit</button>
     </div>
