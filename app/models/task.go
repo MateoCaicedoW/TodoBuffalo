@@ -37,8 +37,12 @@ func (t *Task) Validate() (*validate.Errors, error) {
 			Message: "%s User can't be blank.",
 		},
 		&validators.TimeIsPresent{Field: t.Must, Name: "Must"},
+
 		&validators.FuncValidator{
 			Fn: func() bool {
+				if time.Now().Format("2006-01-02") == t.Must.Format("2006-01-02") {
+					return true
+				}
 				if t.Must.Before(time.Now()) {
 					return false
 				}

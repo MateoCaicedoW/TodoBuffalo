@@ -56,10 +56,23 @@ func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 // Authorize require a user be logged in before accessing a route
 func Authorize(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
-		if uid := c.Session().Get("current_user_id"); uid == nil {
 
+		if uid := c.Session().Get("current_user_id"); uid == nil {
 			return c.Redirect(http.StatusSeeOther, "/")
 		}
+		return next(c)
+	}
+}
+
+func MyMiddleware(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+
+		user := c.Value("current_user").(*models.User)
+		if user.Rol != "admin" {
+			c.Flash().Add("error", "You are not authorized to access this page")
+			return c.Redirect(http.StatusSeeOther, "/")
+		}
+
 		return next(c)
 	}
 }

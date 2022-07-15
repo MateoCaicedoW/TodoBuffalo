@@ -13,7 +13,9 @@
                     <th class="py-3"></th>
                     <th class="py-3 fw-normal">FirstName</th>
                     <th class="py-3 fw-normal">LastName</th>
+                    <th class="py-3 fw-normal text-center">Role</th>
                     <th class="py-3 fw-normal text-center">Email</th>
+                    
 					<th class="py-3 fw-normal text-center">Action</th>
                 </tr>
             </thead>
@@ -25,15 +27,19 @@
 							
                         </td>
                         <td class="py-3 text-info bi show-description">
-                            <%= i.FirstName %>
+                           <a href="users/show/<%=i.ID%> "><%= i.FirstName %></a> 
                         </td>
                         
                         <td class="py-3">
                             <%= i.LastName %>
                         </td>
-						<td class="py-3">
+                        <td class="py-3 text-center">
+                            <%= i.Rol %>
+                        </td>
+						<td class="py-3 text-center">
                             <%= i.Email %>
                         </td>
+                        
 
                         <td class="d-flex py-4  justify-content-center align-items-center">
                             <a href="/users/edit/<%=i.ID%>">

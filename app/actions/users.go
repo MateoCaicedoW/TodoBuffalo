@@ -18,9 +18,7 @@ import (
 // GET /users
 func UsersList(c buffalo.Context) error {
 	// Get the DB connection from the context
-	if c.Value("current_user") != nil {
-		return c.Redirect(http.StatusSeeOther, "/todo")
-	}
+
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
 		return fmt.Errorf("no transaction found")
@@ -46,15 +44,19 @@ func UsersList(c buffalo.Context) error {
 
 // // New renders the form for creating a new User.
 // // This function is mapped to the path GET /users/new
-func UsersShow(c buffalo.Context) error {
-	if c.Value("current_user") != nil {
-		return c.Redirect(http.StatusSeeOther, "/todo")
+func UsersNew(c buffalo.Context) error {
+
+	a := c.Session().Get("current_user_id")
+	fmt.Println(a)
+	if a != nil && c.Value("current_user").(*models.User).Rol != "admin" {
+		c.Flash().Add("error", "You are not authorized to access this page")
+		c.Redirect(http.StatusSeeOther, "/")
 	}
 	// Allocate an empty User
 	user := &models.User{}
 
+	serRol(c)
 	c.Set("user", user)
-
 	return c.Render(http.StatusOK, r.HTML("/users/new.plush.html"))
 }
 
@@ -79,6 +81,7 @@ func UsersCreate(c buffalo.Context) error {
 	if verrs, _ := user.Validate(tx, c); verrs.HasAny() {
 		c.Set("errors", verrs)
 		c.Set("user", user)
+		serRol(c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/new.plush.html"))
 	}
 
@@ -103,15 +106,13 @@ func UsersCreate(c buffalo.Context) error {
 	c.Flash().Add("success", "User created successfully")
 
 	// and redirect to the show page
-	return c.Redirect(http.StatusSeeOther, "/signin")
+	return c.Redirect(http.StatusSeeOther, "/users")
 }
 
 // Edit renders a edit form for a User. This function is
 // mapped to the path GET /users/{user_id}/edit
 func UsersEdit(c buffalo.Context) error {
-	if c.Value("current_user") != nil {
-		return c.Redirect(http.StatusSeeOther, "/todo")
-	}
+
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
@@ -124,6 +125,7 @@ func UsersEdit(c buffalo.Context) error {
 	if err := tx.Find(user, c.Param("id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
+	serRol(c)
 
 	c.Set("user", user)
 
@@ -147,21 +149,32 @@ func UsersUpdate(c buffalo.Context) error {
 	}
 
 	// Bind User to the html form elements
-	if err := c.Bind(user); err != nil {
+	userTemp := &models.User{}
+	if err := c.Bind(userTemp); err != nil {
 		return err
 	}
+	userTemp.ID = user.ID
+
+	if userTemp.Password == "" {
+		userTemp.PasswordHash = user.PasswordHash
+	}
+
+	if userTemp.Password != "" {
+		hashPass, err := bcrypt.GenerateFromPassword([]byte(userTemp.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+		userTemp.PasswordHash = string(hashPass)
+	}
+
 	if verrs, _ := user.Validate(tx, c); verrs.HasAny() {
 		c.Set("errors", verrs)
 		c.Set("user", user)
+		serRol(c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/edit.plush.html"))
 	}
 
-	userTemp := &models.User{}
-	if err := tx.Find(userTemp, c.Param("id")); err != nil {
-		return c.Error(http.StatusNotFound, err)
-	}
-
-	if err := tx.Update(user); err != nil {
+	if err := tx.Update(userTemp); err != nil {
 		return err
 	}
 
@@ -198,4 +211,33 @@ func UsersDestroy(c buffalo.Context) error {
 
 	// Redirect to the index page
 	return c.Redirect(http.StatusSeeOther, "/users")
+}
+
+func UsersShow(c buffalo.Context) error {
+	user := &models.User{}
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+	if err := tx.Find(user, c.Param("id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+	tasks := []models.Task{}
+	if err := tx.Where("user_id = ?", user.ID).All(&tasks); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	c.Set("tasks", tasks)
+	c.Set("user", user)
+	return c.Render(http.StatusOK, r.HTML("/users/show.plush.html"))
+}
+
+func serRol(c buffalo.Context) {
+	if c.Value("current_user") != nil {
+		rol := models.Rol
+		rol["user"] = "user"
+		rol["admin"] = "admin"
+		c.Set("rol", rol)
+		c.Set("current_user", c.Value("current_user").(*models.User))
+	}
 }

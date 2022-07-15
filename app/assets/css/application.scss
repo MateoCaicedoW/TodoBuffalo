@@ -146,6 +146,31 @@ table tbody{
 .new-user-container{
     width: auto;
 }
+.card-user{
+    height: 250px;
+}
+.content-task{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.height-card{
+    div{
+        border-bottom: 0.5px solid #e2e2e2;
+    }
+
+    p{
+        font-weight: light;
+    }
+}
+
+.task-container{
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+}
 
 @media (max-width: 802px) {
     #text-left{
@@ -223,4 +248,8 @@ table tbody{
         bottom: 0;
     }
     
+}
+
+.uppercase{
+    text-transform: uppercase;
 }

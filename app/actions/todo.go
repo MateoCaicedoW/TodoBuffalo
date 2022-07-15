@@ -2,6 +2,7 @@ package actions
 
 import (
 	"TodoBuffalo/app/models"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -23,10 +24,18 @@ func (t TodoResource) List(c buffalo.Context) error {
 	q = q.Order("created_at desc")
 
 	u := c.Value("current_user").(*models.User)
-	if err := q.Eager().Where("user_id = ?", u.ID).All(&tasks); err != nil {
-		return err
-	}
 
+	if u.Rol != "admin" {
+		if err := q.Eager().Where("user_id = ?", u.ID).All(&tasks); err != nil {
+			return err
+		}
+	}
+	if u.Rol == "admin" {
+		if err := q.Eager().All(&tasks); err != nil {
+			return err
+		}
+	}
+	c.Set("current_user", u)
 	c.Set("tasks", tasks)
 	c.Set("pagination", q.Paginator)
 
@@ -34,13 +43,16 @@ func (t TodoResource) List(c buffalo.Context) error {
 }
 
 func (t TodoResource) New(c buffalo.Context) error {
-	users := []models.User{}
+
 	tx := c.Value("tx").(*pop.Connection)
-	var task models.Task
-	task.Must = time.Now()
+	users := []models.User{}
 	if err := tx.All(&users); err != nil {
 		return err
 	}
+	var task models.Task
+	task.Must = time.Now()
+
+	findUsers(c, tx, users)
 
 	c.Set("task", task)
 
@@ -50,6 +62,10 @@ func (t TodoResource) New(c buffalo.Context) error {
 func (t TodoResource) Create(c buffalo.Context) error {
 
 	tx := c.Value("tx").(*pop.Connection)
+	users := []models.User{}
+	if err := tx.All(&users); err != nil {
+		return err
+	}
 	task := &models.Task{
 		User: &models.User{},
 	}
@@ -59,20 +75,8 @@ func (t TodoResource) Create(c buffalo.Context) error {
 		return err
 	}
 	task.Status = false
-	user := c.Value("current_user").(*models.User)
-	task.User = user
-	task.UserID = user.ID
 
-	if verrs, _ := task.Validate(); verrs.HasAny() {
-		c.Set("task", task)
-		users := []models.User{}
-		if err := tx.All(&users); err != nil {
-			return err
-		}
-		// create map of users
-
-		c.Set("errors", verrs.Errors)
-
+	if err := validateCreateAndUpdate(c, task, tx, users); err != "" {
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("todo/new.plush.html"))
 	}
 
@@ -87,6 +91,10 @@ func (t TodoResource) Create(c buffalo.Context) error {
 func (t TodoResource) Show(c buffalo.Context) error {
 
 	tx := c.Value("tx").(*pop.Connection)
+	users := []models.User{}
+	if err := tx.All(&users); err != nil {
+		return err
+	}
 	var task models.Task
 	id := c.Param("todo_id")
 
@@ -95,32 +103,39 @@ func (t TodoResource) Show(c buffalo.Context) error {
 		return err
 	}
 
+	findUsers(c, tx, users)
+
 	c.Set("task", task)
 	return c.Render(http.StatusOK, r.HTML("todo/edit.plush.html"))
 }
 
 func (t TodoResource) Update(c buffalo.Context) error {
+
 	tx := c.Value("tx").(*pop.Connection)
-	taskTemp := &models.Task{}
-	id := c.Param("todo_id")
-	taskTemp.ID = uuid.FromStringOrNil(id)
-	if err := c.Bind(taskTemp); err != nil {
+	users := []models.User{}
+	if err := tx.All(&users); err != nil {
 		return err
 	}
-	user := c.Value("current_user").(*models.User)
-	taskTemp.User = user
-	taskTemp.UserID = user.ID
+	taskTemp := &models.Task{}
 
-	if verrs, _ := taskTemp.Validate(); verrs.HasAny() {
-		c.Set("task", taskTemp)
-		c.Set("errors", verrs.Errors)
+	id := c.Param("todo_id")
+
+	taskTemp.ID = uuid.FromStringOrNil(id)
+	if err := c.Bind(taskTemp); err != nil {
+
+		return err
+	}
+
+	if err := validateCreateAndUpdate(c, taskTemp, tx, users); err != "" {
 
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("todo/edit.plush.html"))
 	}
+
 	if err := tx.Eager().Update(taskTemp); err != nil {
 		return err
 	}
 
+	fmt.Println("Pero aqui si")
 	c.Flash().Add("success", "Record was successfully updated!")
 	return c.Redirect(http.StatusSeeOther, "/todo")
 }
@@ -159,4 +174,35 @@ func Status(c buffalo.Context) error {
 	}
 
 	return c.Redirect(http.StatusSeeOther, "/")
+}
+
+func findUsers(c buffalo.Context, tx *pop.Connection, users []models.User) {
+
+	//create map of users
+	userMap := make(map[string]interface{})
+
+	for i := 0; i < len(users); i++ {
+
+		userMap[users[i].Email] = users[i].ID.String()
+	}
+	c.Set("users", userMap)
+
+}
+
+func validateCreateAndUpdate(c buffalo.Context, task *models.Task, tx *pop.Connection, arrayUsers []models.User) string {
+	user := c.Value("current_user").(*models.User)
+	if user.Rol != "admin" {
+		task.User = user
+		task.UserID = user.ID
+	}
+
+	if verrs, _ := task.Validate(); verrs.HasAny() {
+		findUsers(c, tx, arrayUsers)
+
+		c.Set("task", task)
+		c.Set("errors", verrs.Errors)
+
+		return "error"
+	}
+	return ""
 }

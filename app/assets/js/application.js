@@ -7,7 +7,7 @@ let flash= document.getElementById("flash")
 
 flash.addEventListener("click", (e)=>{
     ev = e.target
-    if (ev.classList.contains("close-flash-error") || ev.classList.contains("close-flash-success")) {
+    if (ev.classList.contains("close-flash")) {
         flash.classList.add("d-none")
     }
 })

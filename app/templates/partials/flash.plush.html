@@ -1,28 +1,20 @@
     <div id="flash" class="d-flex flex-row justify-content-center me-3">
  
-        <%= for (message) in flash["error"] { %>
-            <div id="flash-error" class="d-flex flex-row-reverse text-white alert" role="alert">
-                <div>
-                    <button  type="button" class="ms-2 btn btn-close close-flash-error"></button>
+        <%= for (k, messages) in flash { %>
+            <%= for (msg) in messages{ %>
+            
+                <div id="flash-<%= k %>" class="d-flex flex-row-reverse text-white alert" role="alert">
+                    <div>
+                        <button  type="button" class="ms-2 btn btn-close close-flash"></button>
+                    </div>
+                    <div>
+                        <span class="fw-bold uppercase"><%= k %></span>
+                        <p class="mt-2"><%= msg %></p>
+                    </div>
                 </div>
-                <div>
-                    <span class="fw-bold">Error:</span>
-                    <p class="mt-2"><%= message %></p>
-                </div>
-            </div>
+            <% } %>
         <% } %>
-
-        <%= for (message) in flash["success"] { %>
-            <div  id="flash-success" class="d-flex flex-row-reverse text-white alert mb-3" role="alert">
-                <div>
-                    <button  type="button" class="ms-2 btn btn-close close-flash-success"></button>
-                </div>
-                <div>
-                    <span class="fw-bold">Message:</span>
-                    <p class="mt-2"><%= message %></p>
-                </div>
-            </div>
-          <% } %>
+       
         
     </div>
 

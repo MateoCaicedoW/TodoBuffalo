@@ -1,6 +1,7 @@
 package render
 
 import (
+	"TodoBuffalo/app/models"
 	"TodoBuffalo/app/templates"
 	"TodoBuffalo/public"
 
@@ -27,6 +28,9 @@ var Helpers = map[string]interface{}{
 	// to find the partials that will be used, this is important
 	"partialFeeder": buffalotools.NewPartialFeeder(templates.FS()),
 	"currentUser":   currentUser,
+	"admin":         Admin,
+	"adminPermiss":  AdminPermiss,
+	"redirect":      Redirect,
 }
 
 func currentUser(c plush.HelperContext) bool {
@@ -36,4 +40,30 @@ func currentUser(c plush.HelperContext) bool {
 	}
 
 	return false
+}
+
+func Admin(c plush.HelperContext) bool {
+
+	if c.Value("current_user") != nil {
+		user := c.Value("current_user").(*models.User)
+		if user.Rol == "admin" {
+			return true
+		}
+	}
+
+	return false
+}
+
+func AdminPermiss(c plush.HelperContext) string {
+	if Admin(c) {
+		return "col-md-6 pe-0 pe-md-2"
+	}
+	return "col-md-12 pe-0"
+}
+
+func Redirect(c plush.HelperContext) string {
+	if Admin(c) {
+		return "/users"
+	}
+	return "/"
 }

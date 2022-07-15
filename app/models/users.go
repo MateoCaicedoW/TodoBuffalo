@@ -1,6 +1,7 @@
 package models
 
 import (
+	"regexp"
 	"strings"
 	"time"
 
@@ -10,6 +11,10 @@ import (
 	"github.com/gobuffalo/validate/v3/validators"
 	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
+)
+
+var (
+	Rol = make(map[string]string)
 )
 
 type User struct {
@@ -22,6 +27,7 @@ type User struct {
 	PasswordConfirmation string    `db:"-"`
 	CreatedAt            time.Time `db:"created_at"`
 	UpdatedAt            time.Time `db:"updated_at"`
+	Rol                  string    `db:"rol"`
 	Task                 Task      `has_one:"tasks"`
 }
 
@@ -29,8 +35,26 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 
 	return validate.Validate(
 		&validators.StringIsPresent{Field: u.FirstName, Name: "First Name"},
-		&validators.RegexMatch{Field: u.LastName, Name: "Last Name", Expr: `^[a-zA-Z]+$`, Message: "Last Name must be letters only"},
-		&validators.RegexMatch{Field: u.FirstName, Name: "First Name", Expr: `^[a-zA-Z]+$`, Message: "First Name must be letters only"},
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if u.FirstName != "" && !regexp.MustCompile(`^[a-zA-Z]+$`).MatchString(u.FirstName) {
+					return false
+				}
+				return true
+			},
+			Name:    "First Name",
+			Message: "%s Last Name must be letters only",
+		},
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if u.LastName != "" && !regexp.MustCompile(`^[a-zA-Z]+$`).MatchString(u.LastName) {
+					return false
+				}
+				return true
+			},
+			Name:    "First Name",
+			Message: "%s Last Name must be letters only",
+		},
 		&validators.StringIsPresent{Field: u.LastName, Name: "Last Name"},
 		&validators.StringIsPresent{Field: u.Email, Name: "Email"},
 		&validators.FuncValidator{
@@ -47,8 +71,8 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 		&validators.FuncValidator{
 			Fn: func() bool {
 
-				if (c.Request().URL.String() == "/users/new/" || c.Request().URL.String() != "/users/new/") && len(u.Password) > 0 {
-					if u.Password != u.PasswordConfirmation {
+				if (c.Request().URL.String() == "/users/new/" || c.Request().URL.String() != "/users/new/") && len(u.Password) >= 8 {
+					if u.Password != "" && u.Password != u.PasswordConfirmation {
 						return false
 					}
 				}
@@ -88,13 +112,16 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 				return !b
 			},
 		},
-
-		&validators.EmailIsPresent{Name: "Email", Field: u.Email},
-		&validators.RegexMatch{
-			Field:   u.Email,
+		&validators.FuncValidator{
+			Fn: func() bool {
+				ex := `^[\w\.]+@([\w-]+\.)+[\w-]{2,4}$`
+				if u.Email != "" && !regexp.MustCompile(ex).MatchString(u.Email) {
+					return false
+				}
+				return true
+			},
 			Name:    "Email",
-			Expr:    `^[\w\.]+@([\w-]+\.)+[\w-]{2,4}$`,
-			Message: "Email is invalid",
+			Message: "%s Email is invalid",
 		},
 	), nil
 }

@@ -14,6 +14,9 @@
                 <tr class="top">
                     <th class="py-3"></th>
                     <th class="py-3 fw-normal">Task</th>
+                    <%= if (current_user.Rol == "admin") { %>
+                    <th class="py-3 fw-normal">User</th>
+                    <% } %>
                     <th class="py-3 fw-normal">Must be to</th>
                     <th class="py-3 fw-normal text-center">Actions</th>
                 </tr>
@@ -36,6 +39,12 @@
                         <td class="py-3 text-info bi show-description">
                             <%= i.Title %>
                         </td>
+                      
+                        <%= if (current_user.Rol == "admin") { %>
+                        <td class="py-3">
+                            <%= i.User.Email %>
+                        </td>
+                        <% } %>
                        
                         <td class="py-3">
                             <%= i.Must.Format("2006-02-01") %>

@@ -7,6 +7,14 @@
     <div class="col-md-6">
         <%= f.InputTag("Must", {type: "date" , class: "form-control" }) %>
     </div>
+    <%= if (current_user.Rol == "admin") { %>
+        <div class="row pe-0 mt-2">
+            <div class="col-12">
+                <%= f.SelectTag("UserID", {options: users }) %>
+            </div>
+        </div>
+    <% } %>
+   
  
     <div class="col mt-2">
         <%= f.TextArea("Description", {rows:10}) %>

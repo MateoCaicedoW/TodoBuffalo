@@ -19,7 +19,9 @@
                     <div class="navbar-nav">
                         <%= if (currentUser()) { %>
                             <a  class=" nav-link text-white "  href="/">Tasks</a>
-                       
+                            <%= if (admin()) { %>
+                                <a  class=" nav-link text-white "  href="/users">Users</a>
+                            <% } %>
                             <%= form({action: signoutPath(),method:"DELETE"}) { %>
                                 <button class="btn text-white" type="submit"> Singout</button>
                                     <% } %>
