@@ -2,9 +2,18 @@
 
 <section class="layout-add d-flex flex-column">
     
-    <div class="d-flex justify-content-end  ">
-       
-        <a href="<%= newTodoPath() %>"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
+    <div class="justify-content-between row g-2 ">
+        <div class="col-12 col-md-3">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input id="search-tasks" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+                
+            </div>
+        
+        </div>
+        <a href="<%= newTodoPath() %>" class="col-12 col-md-6 d-flex justify-content-end"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
                 Task</button>
         </a>
     </div>
@@ -24,8 +33,8 @@
             <tbody class="rounded-bottom" id="items">
 
                 <%= for (i) in tasks { %>
-                    <tr>
-                        <td class="py-3 text-center px-0">
+                    <tr class="tasks">
+                        <td class="pt-4 text-center px-0">
                             <%= form({action: "/todo/status/" +i.ID ,method:"PUT", id:"form-status"}) { %>
                                 <%= if (i.Status == true)  {%>
                                     <button class="btn p-0" type="submit"> <i class="fa-solid fa-ban"></i></button>
@@ -36,20 +45,20 @@
                             
                         
                         </td>
-                        <td class="py-3 text-info bi show-description">
+                        <td class="pt-4 text-info bi show-description">
                             <%= i.Title %>
                         </td>
                       
                         <%= if (current_user.Rol == "admin") { %>
-                        <td class="py-3">
+                        <td class="pt-4">
                             <%= i.User.Email %>
                         </td>
                         <% } %>
                        
-                        <td class="py-3">
+                        <td class="pt-4">
                             <%= i.Must.Format("2006-02-01") %>
                         </td>
-                        <td class="d-flex py-4  justify-content-center align-items-center">
+                        <td class="d-flex py-4 py-md-3   justify-content-center align-items-center">
                             <a href="<%= todoPath({todo_id: i.ID})%> ">
                                 <button type="button" class="btn btn-success ms-2 submit"><i
                                         class="fas fa-edit"></i></button>

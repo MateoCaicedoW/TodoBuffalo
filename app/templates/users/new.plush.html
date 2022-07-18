@@ -5,6 +5,7 @@
       <h3 class="d-inline-block">New User</h3>
     </div>
     
+    
     <%= form_for(user, {action: "/users/new/", method: "POST"}) { %>
       <%= partial("users/form.plush.html") %>
     <% } %>

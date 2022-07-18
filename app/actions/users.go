@@ -55,7 +55,7 @@ func UsersNew(c buffalo.Context) error {
 	// Allocate an empty User
 	user := &models.User{}
 
-	serRol(c)
+	setRol(c)
 	c.Set("user", user)
 	return c.Render(http.StatusOK, r.HTML("/users/new.plush.html"))
 }
@@ -81,7 +81,7 @@ func UsersCreate(c buffalo.Context) error {
 	if verrs, _ := user.Validate(tx, c); verrs.HasAny() {
 		c.Set("errors", verrs)
 		c.Set("user", user)
-		serRol(c)
+		setRol(c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/new.plush.html"))
 	}
 
@@ -94,7 +94,6 @@ func UsersCreate(c buffalo.Context) error {
 	user.FirstName = strings.ToLower(user.FirstName)
 	user.LastName = strings.ToLower(user.LastName)
 	user.Rol = "user"
-	// Get the DB connection from the context
 
 	// Validate the data from the html form
 	err2 := tx.Create(user)
@@ -125,7 +124,7 @@ func UsersEdit(c buffalo.Context) error {
 	if err := tx.Find(user, c.Param("id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	serRol(c)
+	setRol(c)
 
 	c.Set("user", user)
 
@@ -170,7 +169,7 @@ func UsersUpdate(c buffalo.Context) error {
 	if verrs, _ := user.Validate(tx, c); verrs.HasAny() {
 		c.Set("errors", verrs)
 		c.Set("user", user)
-		serRol(c)
+		setRol(c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/edit.plush.html"))
 	}
 
@@ -232,7 +231,7 @@ func UsersShow(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.HTML("/users/show.plush.html"))
 }
 
-func serRol(c buffalo.Context) {
+func setRol(c buffalo.Context) {
 	if c.Value("current_user") != nil {
 		rol := models.Rol
 		rol["user"] = "user"

@@ -1,20 +1,31 @@
 <section class="layout-add d-flex flex-column">
     
-    <div class="d-flex justify-content-end  ">
-       
-        <a href="/users/new"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
+    <div class="justify-content-between row g-2 ">
+        <div class="col-12 col-md-3">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input id="search-users" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+               
+            </div>
+        
+        </div>
+        
+        <a href="/users/new" class="col-12 col-md-6 d-flex justify-content-end"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 ">Add
                 User</button>
         </a>
+       
     </div>
     <div class="content mt-3 shadow-sm rounded">
-        <table id="table" class="table table-hover   shadow-sm  rounded overflow-scroll table-fixed m-0">
+        <table id="table-users" class="table table-hover   shadow-sm  rounded overflow-scroll table-fixed m-0">
             <thead>
                 <tr class="top">
                     <th class="py-3"></th>
-                    <th class="py-3 fw-normal">FirstName</th>
-                    <th class="py-3 fw-normal">LastName</th>
-                    <th class="py-3 fw-normal text-center">Role</th>
-                    <th class="py-3 fw-normal text-center">Email</th>
+                    <th class="py-3 fw-normal text-center" scope="col">FirstName</th>
+                    <th class="py-3 fw-normal text-center" scope="col">LastName</th>
+                    <th class="py-3 fw-normal text-center" scope="col">Role</th>
+                    <th class="py-3 fw-normal text-center" scope="col">Email</th>
                     
 					<th class="py-3 fw-normal text-center">Action</th>
                 </tr>
@@ -22,26 +33,26 @@
             <tbody class="rounded-bottom" id="items">
 
                 <%= for (i) in users { %>
-                    <tr>
-                        <td class="py-3 text-center px-0">
+                    <tr class="user">
+                        <td class=" text-center px-0">
 							
                         </td>
-                        <td class="py-3 text-info bi show-description">
-                           <a href="users/show/<%=i.ID%> "><%= i.FirstName %></a> 
+                        <td class="pt-4 text-info bi show-description align-items-center text-center">
+                           <a href="users/show/<%=i.ID%> " ><%= i.FirstName %></a> 
                         </td>
                         
-                        <td class="py-3">
-                            <%= i.LastName %>
+                        <td class=" pt-4 text-center ">
+                             <%= i.LastName %>
                         </td>
-                        <td class="py-3 text-center">
+                        <td class=" pt-4 text-center">
                             <%= i.Rol %>
                         </td>
-						<td class="py-3 text-center">
+						<td class=" pt-4 text-center">
                             <%= i.Email %>
                         </td>
                         
 
-                        <td class="d-flex py-4  justify-content-center align-items-center">
+                        <td class="d-flex py-3 justify-content-center align-items-center">
                             <a href="/users/edit/<%=i.ID%>">
                                 <button type="button" class="btn btn-success ms-2 submit"><i
                                         class="fas fa-edit"></i></button>
