@@ -1,14 +1,14 @@
 <section class="layout-add d-flex flex-column">
     
     <div class="justify-content-between row g-2 ">
-        <div class="col-12 col-md-3">
-            <div class="input-group">
-                <span class="input-group-text" id="basic-addon1">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input id="search-users" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
-               
-            </div>
+        <div class="col-12 col-md-4">
+            <%= form({action: "/users", method: "GET"}) { %>
+                <div class="input-group">
+                    <input id="search-users" type="text" class="form-control" placeholder="Search" name="name">
+                    <button id="search-users-button" type="submit" class="btn btn-primary px-4 py-2 ">
+                        Search</button>
+                </div>
+            <% } %>
         
         </div>
         

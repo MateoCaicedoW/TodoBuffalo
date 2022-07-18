@@ -31,8 +31,8 @@ func UsersList(c buffalo.Context) error {
 	q := tx.PaginateFromParams(c.Params())
 	q = q.Order("created_at desc")
 	// Retrieve all Users from the DB
-	if err := q.All(&users); err != nil {
-		return err
+	if err := q.Where("lower(first_name) LIKE ?", "%"+strings.ToLower(c.Param("name")+"%")).All(&users); err != nil {
+		return c.Error(http.StatusNotFound, err)
 	}
 
 	// Add the paginator to the context so it can be used in the template.
@@ -239,4 +239,22 @@ func setRol(c buffalo.Context) {
 		c.Set("rol", rol)
 		c.Set("current_user", c.Value("current_user").(*models.User))
 	}
+}
+
+func SearchUsers(c buffalo.Context) error {
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	q := tx.PaginateFromParams(c.Params())
+	q = q.Order("created_at desc")
+	users := []models.User{}
+	if err := q.Where("first_name LIKE ?", "%"+c.Param("name")+"%").All(&users); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+	// Add the paginator to the context so it can be used in the template.
+	c.Set("pagination", q.Paginator)
+	c.Set("users", users)
+	return c.Render(http.StatusOK, r.HTML("/users/index.plush.html"))
 }

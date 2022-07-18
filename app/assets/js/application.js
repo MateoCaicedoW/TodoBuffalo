@@ -13,39 +13,41 @@ flash.addEventListener("click", (e) => {
 })
 
 
-let searchUser = document.querySelector("#search-users")
-let users = document.querySelectorAll(".user")
-let searchTasks = document.querySelector("#search-tasks")
-let tasks = document.querySelectorAll(".tasks")
+// let searchUser = document.querySelector("#search-users")
+// let users = document.querySelectorAll(".user")
+// let searchTasks = document.querySelector("#search-tasks")
+// let tasks = document.querySelectorAll(".tasks")
+
+// let path = window.location.pathname
+// let array = path.split("/")
+
+// if (array.includes("users")) {
+//     Search(searchUser, users)  
+// }
+// if (array.includes("todo")) {
+//     Search(searchTasks, tasks)    
+// }
 
 
-if (window.location.pathname === "/users") {
-    Search(searchUser, users)  
-}
-if (window.location.pathname === "/todo") {
-    Search(searchTasks, tasks)    
-}
 
 
 
-
-
-function Search(searchInput, items) {
-    searchInput.addEventListener("keyup", (e) => {
-        let search = e.target.value
-        let string = String(search.toLowerCase()) 
-        string = string.split(" ").join(""); 
+// function Search(searchInput, items) {
+//     searchInput.addEventListener("keyup", (e) => {
+//         let search = e.target.value
+//         let string = String(search.toLowerCase()) 
+//         string = string.split(" ").join(""); 
        
 
-        items.forEach((item) => {
-            node = item.childNodes[3].innerText
+//         items.forEach((item) => {
+//             node = item.childNodes[3].innerText
 
-            if (node.toLowerCase().includes(string.toLowerCase())) {
-                item.classList.remove("d-none")
-            } else {
-                item.classList.add("d-none")
-            }
-        })
-    })
+//             if (node.toLowerCase().includes(string.toLowerCase())) {
+//                 item.classList.remove("d-none")
+//             } else {
+//                 item.classList.add("d-none")
+//             }
+//         })
+//     })
 
-}
+// }

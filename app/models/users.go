@@ -102,7 +102,7 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 			Name:    "Password",
 			Message: "%s Passwords do not match.",
 		},
-		&validators.StringIsPresent{Field: u.PasswordConfirmation, Name: "Password Confirmation"},
+
 		&validators.FuncValidator{
 			Fn: func() bool {
 				if (c.Request().URL.String() == "/users/new/") && u.Password != "" || (c.Request().URL.String() != "/users/new/" && u.Password != "") {

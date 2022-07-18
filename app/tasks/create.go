@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/markbates/grift/grift"
 	"github.com/wawandco/fako"
 	"golang.org/x/crypto/bcrypt"
@@ -17,6 +18,7 @@ var _ = grift.Add("create:task", func(c *grift.Context) error {
 		fako.Fill(&task)
 		task.Must = time.Now()
 		task.Status = false
+		task.UserID = uuid.FromStringOrNil("8b04e3a0-853c-417e-aa19-b098e11e7123")
 		if err := models.DB().Create(&task); err != nil {
 			return err
 		}
