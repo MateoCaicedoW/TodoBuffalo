@@ -2,6 +2,7 @@ package actions_test
 
 import (
 	"TodoBuffalo/app/models"
+	"net/http"
 
 	"time"
 
@@ -13,8 +14,8 @@ func (as *ActionSuite) Test_Index() {
 	tasks := [2]models.Task{}
 	users := [2]models.User{}
 
+	setUser(as)
 	for i := 0; i < len(tasks); i++ {
-
 		fako.Fill(&tasks[i])
 		fako.Fill(&users[i])
 		err1 := as.DB.Create(&users[i])
@@ -25,23 +26,31 @@ func (as *ActionSuite) Test_Index() {
 		as.NoError(err)
 	}
 
-	res := as.HTML("/").Get()
+	res := as.HTML("/todo").Get()
 	body := res.Body.String()
+
 	for _, t := range tasks {
 		as.Contains(body, t.Title)
 	}
 
 }
 
+func (as *ActionSuite) Test_Failed_Index() {
+	res := as.HTML("/todo").Get()
+	as.Equal(http.StatusSeeOther, res.Code)
+}
+
 func (as *ActionSuite) Test_New() {
-	res := as.HTML("/new").Get()
-	as.Equal(200, res.Code)
+	setUser(as)
+	res := as.HTML("/todo/new").Get()
+	as.Equal(http.StatusOK, res.Code)
 	body := res.Body.String()
 	as.Contains(body, "New Task")
 }
 
 func (as *ActionSuite) Test_Create() {
 
+	setUser(as)
 	user := &models.User{}
 	fako.Fill(user)
 	err := as.DB.Create(user)
@@ -52,14 +61,16 @@ func (as *ActionSuite) Test_Create() {
 		Description: "Test Description",
 		Must:        time.Now(),
 		UserID:      user.ID,
+		User:        user,
 	}
 
-	res := as.HTML("/new/").Post(task)
-	as.Equal(303, res.Code)
+	res := as.HTML("/todo/").Post(task)
+	as.Equal(http.StatusSeeOther, res.Code)
 	as.Equal("/", res.Location())
 }
 
 func (as *ActionSuite) Test_Edit() {
+	setUser(as)
 	user := &models.User{}
 	fako.Fill(user)
 	err1 := as.DB.Create(user)
@@ -72,14 +83,15 @@ func (as *ActionSuite) Test_Edit() {
 	err := as.DB.Create(task)
 	as.NoError(err)
 
-	res := as.HTML("/edit/" + task.ID.String()).Get()
-	as.Equal(200, res.Code)
+	res := as.HTML("/todo/" + task.ID.String()).Get()
+	as.Equal(http.StatusOK, res.Code)
 	body := res.Body.String()
 	as.Contains(body, task.Title)
 	as.Contains(body, "Edit Task")
 }
 
 func (as *ActionSuite) Test_Update() {
+	setUser(as)
 	user := &models.User{}
 	fako.Fill(user)
 	err1 := as.DB.Create(user)
@@ -98,15 +110,16 @@ func (as *ActionSuite) Test_Update() {
 	taskUpdate.ID = task.ID
 	taskUpdate.Must = time.Now()
 
-	res := as.HTML("/edit/" + task.ID.String()).Put(taskUpdate)
+	res := as.HTML("/todo/" + task.ID.String()).Put(taskUpdate)
 
-	as.Equal(303, res.Code)
-	as.Equal("/", res.Location())
+	as.Equal(http.StatusSeeOther, res.Code)
+	as.Equal("/todo", res.Location())
 	as.DB.Reload(task)
 	as.Equal(taskUpdate.Title, task.Title)
 }
 
 func (as *ActionSuite) Test_Destroy() {
+	setUser(as)
 	user := &models.User{}
 	fako.Fill(user)
 	err1 := as.DB.Create(user)
@@ -119,13 +132,14 @@ func (as *ActionSuite) Test_Destroy() {
 	err := as.DB.Create(task)
 	as.NoError(err)
 
-	res := as.HTML("/delete/" + task.ID.String()).Delete()
-	as.Equal(303, res.Code)
-	as.Equal("/", res.Location())
+	res := as.HTML("/todo/" + task.ID.String()).Delete()
+	as.Equal(http.StatusSeeOther, res.Code)
+	as.Equal("/todo", res.Location())
 
 }
 
 func (as *ActionSuite) Test_Status() {
+	setUser(as)
 	user := &models.User{}
 	fako.Fill(user)
 	err1 := as.DB.Create(user)
@@ -143,7 +157,23 @@ func (as *ActionSuite) Test_Status() {
 	taskUpdate.ID = task.ID
 	taskUpdate.Status = true
 
-	res := as.HTML("/status/" + task.ID.String()).Put(taskUpdate)
-	as.Equal(303, res.Code)
+	res := as.HTML("/todo/status/" + task.ID.String()).Put(taskUpdate)
+	as.Equal(http.StatusSeeOther, res.Code)
 	as.Equal("/", res.Location())
+}
+
+func setUser(as *ActionSuite) {
+	u := &models.User{
+		FirstName:            "John",
+		LastName:             "Doe",
+		Email:                "caicedomateo9@gmail.com",
+		Password:             "password",
+		PasswordConfirmation: "password",
+		Rol:                  "user",
+	}
+	verrs, err := u.Create(as.DB)
+	as.NoError(err)
+	as.False(verrs.HasAny())
+	as.Session.Set("current_user_id", u.ID)
+	as.Session.Set("current_user", u)
 }
