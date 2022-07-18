@@ -21,19 +21,19 @@ func (t TodoResource) List(c buffalo.Context) error {
 
 	tx := c.Value("tx").(*pop.Connection)
 
-	keyword := c.Param("title")
+	keyword := "%" + strings.ToLower(c.Param("keyword")) + "%"
 
 	q := tx.PaginateFromParams(c.Params())
 	q = q.Order("created_at desc")
 	u := c.Value("current_user").(*models.User)
 
 	if u.Rol != "admin" {
-		if err := q.Eager().Where("lower(title) LIKE ? ", "%"+strings.ToLower(keyword)+"%").Where("user_id = ?", u.ID).All(&tasks); err != nil {
+		if err := q.Eager().Where("lower(title) LIKE ? or lower(description) LIKE ?  ", keyword, keyword).Where("user_id = ?", u.ID).All(&tasks); err != nil {
 			return c.Error(http.StatusNotFound, err)
 		}
 	}
 	if u.Rol == "admin" {
-		if err := q.Eager().Where("lower(title) LIKE ? ", "%"+strings.ToLower(keyword)+"%").All(&tasks); err != nil {
+		if err := q.Eager().Where("lower(title) LIKE ? or lower(description) LIKE ?  ", keyword, keyword).All(&tasks); err != nil {
 			return err
 		}
 	}

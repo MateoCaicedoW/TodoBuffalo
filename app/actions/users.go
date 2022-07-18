@@ -31,7 +31,9 @@ func UsersList(c buffalo.Context) error {
 	q := tx.PaginateFromParams(c.Params())
 	q = q.Order("created_at desc")
 	// Retrieve all Users from the DB
-	if err := q.Where("lower(first_name) LIKE ?", "%"+strings.ToLower(c.Param("name")+"%")).All(&users); err != nil {
+	keyword := "%" + strings.ToLower(c.Param("keyword")) + "%"
+	if err := q.Where("lower(first_name) LIKE ? or lower(last_name) LIKE ? or lower(email) LIKE ? ", keyword, keyword, keyword).
+		All(&users); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
