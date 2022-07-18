@@ -93,7 +93,7 @@ func UsersCreate(c buffalo.Context) error {
 	user.PasswordHash = string(hashPass)
 	user.FirstName = strings.ToLower(user.FirstName)
 	user.LastName = strings.ToLower(user.LastName)
-
+	user.Rol = "user"
 	// Get the DB connection from the context
 
 	// Validate the data from the html form

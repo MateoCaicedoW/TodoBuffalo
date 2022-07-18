@@ -43,7 +43,7 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 				return true
 			},
 			Name:    "First Name",
-			Message: "%s Last Name must be letters only",
+			Message: "%s Last Name must be letters only.",
 		},
 		&validators.FuncValidator{
 			Fn: func() bool {
@@ -52,8 +52,8 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 				}
 				return true
 			},
-			Name:    "First Name",
-			Message: "%s Last Name must be letters only",
+			Name:    "Last Name",
+			Message: "%s Last Name must be letters only.",
 		},
 		&validators.StringIsPresent{Field: u.LastName, Name: "Last Name"},
 		&validators.StringIsPresent{Field: u.Email, Name: "Email"},
@@ -70,8 +70,28 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 		},
 		&validators.FuncValidator{
 			Fn: func() bool {
+				if u.FirstName != "" && len(u.FirstName) > 50 && regexp.MustCompile(`^[a-zA-Z]+$`).MatchString(u.FirstName) {
+					return false
+				}
+				return true
+			},
+			Name:    "First Name",
+			Message: "%s First Name must be less than 50 characters.",
+		},
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if u.LastName != "" && len(u.LastName) > 50 && regexp.MustCompile(`^[a-zA-Z]+$`).MatchString(u.LastName) {
+					return false
+				}
+				return true
+			},
+			Name:    "Last Name",
+			Message: "%s Last Name must be less than 50 characters.",
+		},
+		&validators.FuncValidator{
+			Fn: func() bool {
 
-				if (c.Request().URL.String() == "/users/new/" || c.Request().URL.String() != "/users/new/") && len(u.Password) >= 8 {
+				if (c.Request().URL.String() == "/users/new/" || c.Request().URL.String() != "/users/new/") && len(u.Password) >= 8 && len(u.Password) <= 50 {
 					if u.Password != "" && u.Password != u.PasswordConfirmation {
 						return false
 					}
@@ -82,17 +102,18 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 			Name:    "Password",
 			Message: "%s Passwords do not match.",
 		},
+		&validators.StringIsPresent{Field: u.PasswordConfirmation, Name: "Password Confirmation"},
 		&validators.FuncValidator{
 			Fn: func() bool {
 				if (c.Request().URL.String() == "/users/new/") && u.Password != "" || (c.Request().URL.String() != "/users/new/" && u.Password != "") {
-					if len(u.Password) < 8 {
+					if len(u.Password) < 8 || len(u.Password) > 50 {
 						return false
 					}
 				}
 				return true
 			},
 			Name:    "Password",
-			Message: " %s Password must be at least 8 characters.",
+			Message: " %s Password must be between 8 and 50 characters.",
 		},
 
 		&validators.FuncValidator{
@@ -122,6 +143,34 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 			},
 			Name:    "Email",
 			Message: "%s Email is invalid",
+		},
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if u.Email != "" {
+					local := strings.Split(u.Email, "@")
+					str := local[0]
+					if len(str) > 64 {
+						return false
+					}
+				}
+				return true
+			},
+			Name:    "Email",
+			Message: "%s Before @ Email must be less or equal than 64 characters ",
+		},
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if u.Email != "" {
+					local := strings.Split(u.Email, "@")
+					str := local[1]
+					if len(str) > 255 {
+						return false
+					}
+				}
+				return true
+			},
+			Name:    "Email",
+			Message: "%s After @ Email must be less or equal than 255 characters ",
 		},
 	), nil
 }

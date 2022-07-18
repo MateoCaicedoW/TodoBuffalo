@@ -52,6 +52,28 @@ func (t *Task) Validate() (*validate.Errors, error) {
 			Name:    "Must",
 			Message: "%s Must be a future date.",
 		},
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if len(t.Title) > 50 {
+					return false
+				}
+				return true
+			},
+			Field:   "",
+			Name:    "Title",
+			Message: "%s Title must be less than 50 characters.",
+		},
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if len(t.Description) > 450 {
+					return false
+				}
+				return true
+			},
+			Field:   "",
+			Name:    "Description",
+			Message: "%s Description must be less than 450 characters.",
+		},
 	), nil
 
 }
