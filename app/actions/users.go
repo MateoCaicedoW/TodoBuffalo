@@ -226,12 +226,10 @@ func UsersShow(c buffalo.Context) error {
 	if err := tx.Find(user, c.Param("id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	tasks := []models.Task{}
-	if err := tx.Where("user_id = ?", user.ID).All(&tasks); err != nil {
+	if err := tx.Eager("Tasks").Find(user, user.ID); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
-	c.Set("tasks", tasks)
 	c.Set("user", user)
 	return c.Render(http.StatusOK, r.HTML("/users/show.plush.html"))
 }

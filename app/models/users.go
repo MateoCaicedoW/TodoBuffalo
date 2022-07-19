@@ -27,7 +27,7 @@ type User struct {
 	CreatedAt            time.Time `db:"created_at"`
 	UpdatedAt            time.Time `db:"updated_at"`
 	Rol                  string    `db:"rol"`
-	Task                 Task      `has_one:"tasks"`
+	Tasks                []Task    `has_one:"tasks"`
 }
 
 func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, *validate.Errors) {

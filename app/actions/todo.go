@@ -2,6 +2,7 @@ package actions
 
 import (
 	"TodoBuffalo/app/models"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -16,32 +17,36 @@ type TodoResource struct {
 }
 
 func (t TodoResource) List(c buffalo.Context) error {
-	tasks := []models.Task{}
 
 	tx := c.Value("tx").(*pop.Connection)
 
 	keyword := "%" + strings.ToLower(c.Param("keyword")) + "%"
 
 	q := tx.PaginateFromParams(c.Params())
+
 	q = q.Order("created_at desc")
+
 	u := c.Value("current_user").(*models.User)
 
+	user := models.User{}
 	if u.Rol != "admin" {
 
-		if err := q.Eager("User.Task").Where("user_id =?", u.ID).Where("(lower(title)  LIKE ? ) ", keyword).All(&tasks); err != nil {
+		if err := q.Eager().Where("user_id =?", u.ID).Where("(lower(title)  LIKE ? ) ", keyword).All(&user.Tasks); err != nil {
 			return err
 		}
 
 	}
+
 	if u.Rol == "admin" {
-		if err := q.Eager().Where("lower(title) LIKE ?  ", keyword).All(&tasks); err != nil {
+		if err := q.Eager().Where("lower(title) LIKE ?  ", keyword).All(&user.Tasks); err != nil {
 			return err
 		}
 	}
-	c.Set("current_user", u)
-	c.Set("tasks", tasks)
-	c.Set("pagination", q.Paginator)
 
+	fmt.Println("pagination", q.Paginator)
+	c.Set("current_user", u)
+	c.Set("user", user)
+	c.Set("pagination", q.Paginator)
 	return c.Render(http.StatusOK, r.HTML("todo/index.plush.html"))
 }
 

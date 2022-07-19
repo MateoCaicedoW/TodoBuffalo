@@ -32,7 +32,7 @@
             </thead>
             <tbody class="rounded-bottom" id="items">
 
-                <%= for (i) in tasks { %>
+                <%= for (i) in user.Tasks { %>
                     <tr class="tasks">
                         <td class="pt-4 text-center px-0">
                             <%= form({action: "/todo/status/" +i.ID ,method:"PUT", id:"form-status"}) { %>
