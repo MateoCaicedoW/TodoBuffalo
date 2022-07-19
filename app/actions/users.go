@@ -49,7 +49,7 @@ func UsersList(c buffalo.Context) error {
 func UsersNew(c buffalo.Context) error {
 
 	a := c.Session().Get("current_user_id")
-	fmt.Println(a)
+
 	if a != nil && c.Value("current_user").(*models.User).Rol != "admin" {
 		c.Flash().Add("error", "You are not authorized to access this page")
 		c.Redirect(http.StatusSeeOther, "/")
@@ -58,6 +58,7 @@ func UsersNew(c buffalo.Context) error {
 	user := &models.User{}
 
 	setRol(c)
+
 	c.Set("user", user)
 	return c.Render(http.StatusOK, r.HTML("/users/new.plush.html"))
 }
@@ -80,7 +81,8 @@ func UsersCreate(c buffalo.Context) error {
 
 	// Validate the form input
 
-	if verrs, _ := user.Validate(tx, c); verrs.HasAny() {
+	if verrs, verr2 := user.ValidateCreate(tx); verrs.HasAny() {
+		verrs.Append(verr2)
 		c.Set("errors", verrs)
 		c.Set("user", user)
 		setRol(c)
@@ -129,7 +131,6 @@ func UsersEdit(c buffalo.Context) error {
 	setRol(c)
 
 	c.Set("user", user)
-
 	return c.Render(http.StatusOK, r.HTML("/users/edit.plush.html"))
 }
 
@@ -168,9 +169,11 @@ func UsersUpdate(c buffalo.Context) error {
 		userTemp.PasswordHash = string(hashPass)
 	}
 
-	if verrs, _ := user.Validate(tx, c); verrs.HasAny() {
+	fmt.Println("userTemp", userTemp)
+
+	if verrs, _ := userTemp.ValidateUpdate(tx); verrs.HasAny() {
 		c.Set("errors", verrs)
-		c.Set("user", user)
+		c.Set("user", userTemp)
 		setRol(c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/edit.plush.html"))
 	}

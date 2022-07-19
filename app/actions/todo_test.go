@@ -14,7 +14,7 @@ func (as *ActionSuite) Test_Index() {
 	tasks := [2]models.Task{}
 	users := [2]models.User{}
 
-	setUser(as)
+	setUSerAdmin(as)
 	for i := 0; i < len(tasks); i++ {
 		fako.Fill(&tasks[i])
 		fako.Fill(&users[i])

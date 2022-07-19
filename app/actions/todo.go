@@ -2,7 +2,6 @@ package actions
 
 import (
 	"TodoBuffalo/app/models"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -28,9 +27,10 @@ func (t TodoResource) List(c buffalo.Context) error {
 	u := c.Value("current_user").(*models.User)
 
 	if u.Rol != "admin" {
-		if err := q.Eager().Where("lower(title) LIKE ? or lower(description) LIKE ?  ", keyword, keyword).Where("user_id = ?", u.ID).All(&tasks); err != nil {
-			return c.Error(http.StatusNotFound, err)
+		if err := q.Eager().Where("user_id = ?", u.ID).Where("(lower(title) LIKE ? or lower(description) LIKE ?)", keyword, keyword).All(&tasks); err != nil {
+			return err
 		}
+
 	}
 	if u.Rol == "admin" {
 		if err := q.Eager().Where("lower(title) LIKE ? or lower(description) LIKE ?  ", keyword, keyword).All(&tasks); err != nil {
@@ -136,8 +136,6 @@ func (t TodoResource) Update(c buffalo.Context) error {
 	if err := tx.Eager().Update(taskTemp); err != nil {
 		return err
 	}
-
-	fmt.Println("Pero aqui si")
 	c.Flash().Add("success", "Record was successfully updated!")
 	return c.Redirect(http.StatusSeeOther, "/todo")
 }

@@ -73,6 +73,7 @@ func (as *ActionSuite) Test_EditUser() {
 	as.Contains(body, "Edit User")
 
 }
+
 func (as *ActionSuite) Test_UpdateUSer() {
 	setUSerAdmin(as)
 	u := &models.User{
@@ -81,15 +82,20 @@ func (as *ActionSuite) Test_UpdateUSer() {
 		Email:                "test@gmail.com",
 		Password:             "password",
 		PasswordConfirmation: "password",
+		Rol:                  "user",
 	}
 	err := as.DB.Create(u)
 	as.NoError(err)
-	uTemp := &models.User{
-		FirstName: "Testing",
-	}
-	uTemp.ID = u.ID
-	res := as.HTML("/users/edit/" + uTemp.ID.String()).Put(uTemp)
+
+	usersUpdate := u
+	usersUpdate.FirstName = "TestUpdate"
+
+	res := as.HTML("/users/edit/" + u.ID.String()).Put(usersUpdate)
+
 	as.Equal(http.StatusSeeOther, res.Code)
+	as.Equal("/users", res.Location())
+	as.DB.Reload(u)
+	as.Equal(u.FirstName, usersUpdate.FirstName)
 
 }
 

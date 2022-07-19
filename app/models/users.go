@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gobuffalo/validate/v3/validators"
@@ -31,7 +30,75 @@ type User struct {
 	Task                 Task      `has_one:"tasks"`
 }
 
-func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors, error) {
+func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, *validate.Errors) {
+	err, _ := u.ValidatePass()
+	err2, _ := u.Validate(tx)
+	return err, err2
+}
+func (u *User) ValidateUpdate(tx *pop.Connection) (*validate.Errors, *validate.Errors) {
+	var err *validate.Errors
+	if u.Password != "" {
+		err, _ = u.ValidatePass()
+	}
+	err2, _ := u.Validate(tx)
+	return err, err2
+}
+
+func (u *User) Create(tx *pop.Connection) (*validate.Errors, error) {
+	u.Email = strings.ToLower(u.Email)
+	ph, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return validate.NewErrors(), err
+	}
+	u.PasswordHash = string(ph)
+	return tx.ValidateAndCreate(u)
+}
+
+func (u *User) ValidatePass() (*validate.Errors, error) {
+	var err error
+	return validate.Validate(
+		&validators.FuncValidator{
+			Fn: func() bool {
+
+				if len(u.Password) >= 8 && len(u.Password) <= 50 {
+					if u.Password != "" && u.Password != u.PasswordConfirmation {
+						return false
+					}
+				}
+				return true
+			},
+
+			Name:    "Password",
+			Message: "%s Passwords do not match.",
+		},
+
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if u.Password != "" {
+					if len(u.Password) < 8 || len(u.Password) > 50 {
+						return false
+					}
+				}
+				return true
+			},
+			Name:    "Password",
+			Message: " %s Password must be between 8 and 50 characters.",
+		},
+		&validators.FuncValidator{
+			Fn: func() bool {
+				if u.Password == "" {
+					return false
+				}
+				return true
+			},
+
+			Name:    "Password",
+			Message: "%s Password is required.",
+		},
+	), err
+}
+
+func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
 
 	return validate.Validate(
 		&validators.StringIsPresent{Field: u.FirstName, Name: "First Name"},
@@ -43,7 +110,7 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 				return true
 			},
 			Name:    "First Name",
-			Message: "%s Last Name must be letters only.",
+			Message: "%s First Name must be letters only.",
 		},
 		&validators.FuncValidator{
 			Fn: func() bool {
@@ -57,18 +124,9 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 		},
 		&validators.StringIsPresent{Field: u.LastName, Name: "Last Name"},
 		&validators.StringIsPresent{Field: u.Email, Name: "Email"},
-		&validators.FuncValidator{
-			Fn: func() bool {
-				if (c.Request().URL.String() == "/users/new/") && u.Password == "" {
-					return false
-				}
-				return true
-			},
 
-			Name:    "Password",
-			Message: "%s Password is required.",
-		},
 		&validators.FuncValidator{
+
 			Fn: func() bool {
 				if u.FirstName != "" && len(u.FirstName) > 50 && regexp.MustCompile(`^[a-zA-Z]+$`).MatchString(u.FirstName) {
 					return false
@@ -87,33 +145,6 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 			},
 			Name:    "Last Name",
 			Message: "%s Last Name must be less than 50 characters.",
-		},
-		&validators.FuncValidator{
-			Fn: func() bool {
-
-				if (c.Request().URL.String() == "/users/new/" || c.Request().URL.String() != "/users/new/") && len(u.Password) >= 8 && len(u.Password) <= 50 {
-					if u.Password != "" && u.Password != u.PasswordConfirmation {
-						return false
-					}
-				}
-				return true
-			},
-
-			Name:    "Password",
-			Message: "%s Passwords do not match.",
-		},
-
-		&validators.FuncValidator{
-			Fn: func() bool {
-				if (c.Request().URL.String() == "/users/new/") && u.Password != "" || (c.Request().URL.String() != "/users/new/" && u.Password != "") {
-					if len(u.Password) < 8 || len(u.Password) > 50 {
-						return false
-					}
-				}
-				return true
-			},
-			Name:    "Password",
-			Message: " %s Password must be between 8 and 50 characters.",
 		},
 
 		&validators.FuncValidator{
@@ -173,22 +204,4 @@ func (u *User) Validate(tx *pop.Connection, c buffalo.Context) (*validate.Errors
 			Message: "%s After @ Email must be less or equal than 255 characters ",
 		},
 	), nil
-}
-
-func (u *User) Create(tx *pop.Connection) (*validate.Errors, error) {
-	u.Email = strings.ToLower(u.Email)
-	ph, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return validate.NewErrors(), err
-	}
-	u.PasswordHash = string(ph)
-	return tx.ValidateAndCreate(u)
-}
-
-func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
-	var err error
-	return validate.Validate(
-		&validators.StringIsPresent{Field: u.Password, Name: "Password"},
-		&validators.StringsMatch{Name: "Password", Field: u.Password, Field2: u.PasswordConfirmation, Message: "Password does not match confirmation"},
-	), err
 }

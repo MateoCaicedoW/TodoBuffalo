@@ -43,15 +43,18 @@ func (as *ActionSuite) Test_Auth_Create_UnknownUser() {
 
 func (as *ActionSuite) Test_Auth_Create_BadPassword() {
 	u := &models.User{
-		Email:                "mark@example.com",
+		FirstName:            "John",
+		LastName:             "Doe",
+		Email:                "caicedomateo9@gmail.com",
 		Password:             "password",
 		PasswordConfirmation: "password",
+		Rol:                  "user",
 	}
 	verrs, err := u.Create(as.DB)
 	as.NoError(err)
 	as.False(verrs.HasAny())
 
-	u.Password = "bad"
+	u.Password = "passwordbad"
 	res := as.HTML("/signin").Post(u)
 	as.Equal(http.StatusUnprocessableEntity, res.Code)
 	as.Contains(res.Body.String(), "invalid email/password")
