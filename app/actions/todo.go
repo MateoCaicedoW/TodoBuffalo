@@ -27,13 +27,14 @@ func (t TodoResource) List(c buffalo.Context) error {
 	u := c.Value("current_user").(*models.User)
 
 	if u.Rol != "admin" {
-		if err := q.Eager().Where("user_id = ?", u.ID).Where("(lower(title) LIKE ? or lower(description) LIKE ?)", keyword, keyword).All(&tasks); err != nil {
+
+		if err := q.Eager("User.Task").Where("user_id =?", u.ID).Where("(lower(title)  LIKE ? ) ", keyword).All(&tasks); err != nil {
 			return err
 		}
 
 	}
 	if u.Rol == "admin" {
-		if err := q.Eager().Where("lower(title) LIKE ? or lower(description) LIKE ?  ", keyword, keyword).All(&tasks); err != nil {
+		if err := q.Eager().Where("lower(title) LIKE ?  ", keyword).All(&tasks); err != nil {
 			return err
 		}
 	}

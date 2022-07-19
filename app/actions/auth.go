@@ -3,7 +3,6 @@ package actions
 import (
 	"TodoBuffalo/app/models"
 	"database/sql"
-	"fmt"
 	"net/http"
 
 	"github.com/gobuffalo/buffalo"
@@ -30,9 +29,7 @@ func AuthCreate(c buffalo.Context) error {
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	fmt.Println(u.Email, u.Password)
 	tx := c.Value("tx").(*pop.Connection)
-
 	// find a user with the email
 	err := tx.Where("email = ?", u.Email).First(u)
 
@@ -52,7 +49,7 @@ func AuthCreate(c buffalo.Context) error {
 		return bad(c, u)
 	}
 	c.Session().Set("current_user_id", u.ID)
-	c.Flash().Add("success", "Welcome Back to Toodo!")
+	c.Flash().Add("success", "Welcome back to Todo!")
 
 	return c.Redirect(http.StatusSeeOther, "/todo")
 }

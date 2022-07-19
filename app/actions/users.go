@@ -100,7 +100,7 @@ func UsersCreate(c buffalo.Context) error {
 	user.Rol = "user"
 
 	// Validate the data from the html form
-	err2 := tx.Create(user)
+	err2 := tx.Eager().Create(user)
 	if err2 != nil {
 		return err2
 	}
@@ -178,7 +178,7 @@ func UsersUpdate(c buffalo.Context) error {
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/edit.plush.html"))
 	}
 
-	if err := tx.Update(userTemp); err != nil {
+	if err := tx.Eager().Update(userTemp); err != nil {
 		return err
 	}
 
@@ -206,7 +206,7 @@ func UsersDestroy(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
-	if err := tx.Destroy(user); err != nil {
+	if err := tx.Eager().Destroy(user); err != nil {
 		return err
 	}
 

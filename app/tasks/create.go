@@ -19,7 +19,7 @@ var _ = grift.Add("create:task", func(c *grift.Context) error {
 		task.Must = time.Now()
 		task.Status = false
 		task.UserID = uuid.FromStringOrNil("8b04e3a0-853c-417e-aa19-b098e11e7123")
-		if err := models.DB().Create(&task); err != nil {
+		if err := models.DB().Eager().Create(&task); err != nil {
 			return err
 		}
 	}
@@ -31,7 +31,7 @@ var _ = grift.Add("create:users", func(c *grift.Context) error {
 	for i := 0; i < 30; i++ {
 		var user models.User
 		fako.Fill(&user)
-		if err := models.DB().Create(&user); err != nil {
+		if err := models.DB().Eager().Create(&user); err != nil {
 			return err
 		}
 	}
@@ -57,7 +57,7 @@ var _ = grift.Add("create:users:admin", func(c *grift.Context) error {
 
 	pass, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.PasswordHash = string(pass)
-	if err := tx.Create(user); err != nil {
+	if err := tx.Eager().Create(user); err != nil {
 		return err
 	}
 	return nil
