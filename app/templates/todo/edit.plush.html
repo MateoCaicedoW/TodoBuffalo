@@ -2,7 +2,7 @@
     <p class="fw-bold fs-3">
         Edit Task
     </p>
-    <%= form_for(task, {action: "/todo/"+task.ID, method: "PUT"}) { %>
+    <%= form_for(task, {action: todoPath({todo_id:task.ID}), method: "PUT"}) { %>
      <%= partial("todo/form.plush.html") %>
     <% } %>
 </section>

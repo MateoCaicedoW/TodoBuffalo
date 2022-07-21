@@ -2,7 +2,7 @@
 
     <div class="row gap-3">
         <div class="bg-white shadow-sm px-5 py-4 d-flex flex-column justify-content-center align-items-center card-user col-4">
-            <img src="../../assets/images/user.png" alt="a"  width="130px">
+            <img src="/assets/images/user.png" alt="a"  width="130px">
             <div class="text-center">
                 <h5 class=" text-uppercase"><%= user.FirstName %> <%= user.LastName %></h5>
                 
@@ -42,11 +42,21 @@
                         </div> 
                         <div class="row">
                             <h5 class="col-6">Date</h5>
-                            <p class="m-0 text-muted col-6"><%= task.Must.Format("2006-02-01") %> </p>
+                            <p class="m-0 text-muted col-6"><%= task.Must.Day() %>  <%= task.Must.Month() %> <%= task.Must.Year() %></p>
                         </div>
-                        <div class="row border-0">
+                        <div class="row">
                             <h5 class="col-6" >Description</h5>
                             <p class="m-0 text-muted col-6"><%= task.Description %></p>
+                        </div>
+                        <div class="row border-0">
+                            <h5 class="col-6" >Status</h5>
+                            <p class="m-0 text-muted col-6">
+                                <%= if (task.Status) { %>
+                                    Completed
+                                <% } else { %>
+                                    Pending
+                                <% } %>
+                            </p>
                         </div>
                         
                     </div>

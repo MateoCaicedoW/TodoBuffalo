@@ -6,7 +6,7 @@
 </div>
       
 
-<%= formFor(user, {action: "/users/edit/"+user.ID, method: "PUT"}) { %>
+<%= formFor(user, {action:  editUsersPath({id:user.ID }), method: "PUT"}) { %>
       
 
 	<%= partial("users/form.plush.html") %>

@@ -12,7 +12,8 @@
         
         </div>
         
-        <a href="/users/new" class="col-12 col-md-6 d-flex justify-content-end"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 ">Add
+       
+        <a href=" <%= newUsersPath() %>" class="col-12 col-md-6 d-flex justify-content-end"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 ">Add
                 User</button>
         </a>
        
@@ -37,8 +38,9 @@
                         <td class=" text-center px-0">
 							
                         </td>
+                     
                         <td class="pt-4 text-info bi show-description align-items-center text-center">
-                           <a href="users/show/<%=i.ID%> " ><%= i.FirstName %></a> 
+                           <a href="    <%= usersShowPath({id: i.ID})  %>" ><%= i.FirstName %></a> 
                         </td>
                         
                         <td class=" pt-4 text-center ">
@@ -53,11 +55,11 @@
                         
 
                         <td class="d-flex py-3 justify-content-center align-items-center">
-                            <a href="/users/edit/<%=i.ID%>">
+                            <a href=" <%= editUsersPath({id: i.ID})  %>">
                                 <button type="button" class="btn btn-success ms-2 submit"><i
                                         class="fas fa-edit"></i></button>
                             </a>
-                            <%= form({action: "users/delete/" +i.ID ,method:"DELETE"}) { %>
+                            <%= form({action: usersDeletePath({id:i.ID}) ,method:"DELETE"}) { %>
                                     <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>"><i
                                         class="far fa-trash-alt "></i></button>
                                         <%= partial("todo/modal.plush.html", {ID : i.ID}) %>
