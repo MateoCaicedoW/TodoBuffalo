@@ -3,6 +3,7 @@ package actions
 import (
 	"TodoBuffalo/app/models"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -44,7 +45,7 @@ func (t TodoResource) List(c buffalo.Context) error {
 			return err
 		}
 	}
-
+	setMessage(tx, c)
 	c.Set("current_user", u)
 	c.Set("tasks", tasks)
 	c.Set("pagination", q.Paginator)
@@ -64,7 +65,7 @@ func (t TodoResource) New(c buffalo.Context) error {
 	findUsers(c, tx, users)
 
 	c.Set("task", task)
-
+	setMessage(tx, c)
 	return c.Render(http.StatusOK, r.HTML("todo/new.plush.html"))
 }
 
@@ -78,7 +79,6 @@ func (t TodoResource) Create(c buffalo.Context) error {
 	task := &models.Task{
 		User: &models.User{},
 	}
-
 	if err := c.Bind(task); err != nil {
 
 		return err
@@ -111,7 +111,7 @@ func (t TodoResource) Show(c buffalo.Context) error {
 	if err := tx.Eager().Find(&task, id); err != nil {
 		return err
 	}
-
+	setMessage(tx, c)
 	findUsers(c, tx, users)
 
 	c.Set("task", task)
@@ -217,4 +217,12 @@ func validateCreateAndUpdate(c buffalo.Context, task *models.Task, tx *pop.Conne
 		return "error"
 	}
 	return ""
+}
+
+func setMessage(tx *pop.Connection, c buffalo.Context) {
+	tasks := models.Task{}
+	count, _ := tx.Count(tasks)
+
+	message := strconv.Itoa(count) + " Tasks"
+	c.Set("message", message)
 }

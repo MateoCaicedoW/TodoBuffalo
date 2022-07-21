@@ -1,7 +1,7 @@
 <section class="layout-add d-flex flex-column">
     
     <div class="justify-content-between row g-2 ">
-        <div class="col-12 col-md-4">
+        <div  class="col-12 col-md-4 d-none d-md-block">
             <%= form({action: "/users", method: "GET"}) { %>
                 <div class="input-group">
                     <input id="search-users" type="text" class="form-control" placeholder="Search" name="keyword">
@@ -12,17 +12,19 @@
         
         </div>
         
-       
-        <a href=" <%= newUsersPath() %>" class="col-12 col-md-6 d-flex justify-content-end"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 ">Add
-                User</button>
+       <div class="col-12 col-md-6 d-flex justify-content-end">
+        <a href=" <%= newUsersPath() %>" ><button id="add-task" type="button" class="btn btn-primary px-4 py-2 ">Add
+            User</button>
         </a>
+       </div>
+        
        
     </div>
     <div class="content mt-3 shadow-sm rounded">
-        <table id="table-users" class="table table-hover   shadow-sm  rounded overflow-scroll table-fixed m-0">
+        <table id="table" class="table table-hover   shadow-sm  rounded overflow-scroll table-fixed m-0">
+            
             <thead>
                 <tr class="top">
-                    <th class="py-3"></th>
                     <th class="py-3 fw-normal text-center" scope="col">FirstName</th>
                     <th class="py-3 fw-normal text-center" scope="col">LastName</th>
                     <th class="py-3 fw-normal text-center" scope="col">Role</th>
@@ -32,36 +34,35 @@
                 </tr>
             </thead>
             <tbody class="rounded-bottom" id="items">
-
+                <p id="text-table" class="opacity-75">
+                    There is no users.
+                </p>
                 <%= for (i) in users { %>
                     <tr class="user">
-                        <td class=" text-center px-0">
-							
-                        </td>
+                       
                      
-                        <td class="pt-4 text-info bi show-description align-items-center text-center">
-                           <a href="    <%= usersShowPath({id: i.ID})  %>" ><%= i.FirstName %></a> 
+                        <td class="pt-5 pt-md-4  bi show-description align-items-center text-center">
+                           <a class="text-info hover" href="    <%= usersShowPath({id: i.ID})  %>" ><%= i.FirstName %></a> 
                         </td>
                         
-                        <td class=" pt-4 text-center ">
+                        <td class=" pt-5 pt-md-4  text-center ">
                              <%= i.LastName %>
                         </td>
-                        <td class=" pt-4 text-center">
+                        <td class=" pt-5 pt-md-4 text-center">
                             <%= i.Rol %>
                         </td>
-						<td class=" pt-4 text-center">
+						<td class=" pt-5 pt-md-4  text-center">
                             <%= i.Email %>
                         </td>
                         
 
-                        <td class="d-flex py-3 justify-content-center align-items-center">
+                        <td class="d-flex py-5 py-md-4  justify-content-center align-items-center gap-4">
                             <a href=" <%= editUsersPath({id: i.ID})  %>">
-                                <button type="button" class="btn btn-success ms-2 submit"><i
-                                        class="fas fa-edit"></i></button>
+                                <i class="fa-solid fa-pencil"></i>
                             </a>
                             <%= form({action: usersDeletePath({id:i.ID}) ,method:"DELETE"}) { %>
-                                    <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>"><i
-                                        class="far fa-trash-alt "></i></button>
+                                    
+                                        <i class="far fa-trash-alt " data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>" ></i>
                                         <%= partial("todo/modal.plush.html", {ID : i.ID}) %>
                             <% } %> 
                         </td>
@@ -73,6 +74,16 @@
     <div class="d-flex justify-content-between pt-3 ">
             <%= paginator(pagination) %>
             <span class="opacity-25">Displaying <%= pagination.Offset + 1 %> - <%= pagination.Offset + pagination.PerPage %> of <%= pagination.TotalEntriesSize %></span> 
+    </div>
+    <div  class="col-12 col-md-4 pt-4 d-md-none">
+        <%= form({action: "/users", method: "GET"}) { %>
+            <div class="input-group">
+                <input  type="text" class="form-control" placeholder="Search" name="keyword">
+                <button  type="submit" class="btn btn-primary px-4 py-2 ">
+                    Search</button>
+            </div>
+        <% } %>
+    
     </div>
     
 </section>

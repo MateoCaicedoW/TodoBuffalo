@@ -19,36 +19,8 @@ flash.addEventListener("click", (e) => {
 // let searchTasks = document.querySelector("#search-tasks")
 // let tasks = document.querySelectorAll(".tasks")
 
-// let path = window.location.pathname
-// let array = path.split("/")
-
-// if (array.includes("users")) {
-//     Search(searchUser, users)  
-// }
-// if (array.includes("todo")) {
-//     Search(searchTasks, tasks)    
-// }
-
-
-
-
-
-// function Search(searchInput, items) {
-//     searchInput.addEventListener("keyup", (e) => {
-//         let search = e.target.value
-//         let string = String(search.toLowerCase()) 
-//         string = string.split(" ").join(""); 
-       
-
-//         items.forEach((item) => {
-//             node = item.childNodes[3].innerText
-
-//             if (node.toLowerCase().includes(string.toLowerCase())) {
-//                 item.classList.remove("d-none")
-//             } else {
-//                 item.classList.add("d-none")
-//             }
-//         })
-//     })
-
-// }
+let table = document.querySelector("#table")
+if (table.childNodes.item(3).childNodes.length !=1) {
+    document.querySelector("#text-table").classList.add("d-none")
+    
+}

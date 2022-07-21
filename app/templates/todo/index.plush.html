@@ -3,21 +3,24 @@
 <section class="layout-add d-flex flex-column">
     
     <div class="justify-content-between row g-2 ">
-        <div class="col-12 col-md-4">
+        <div  class="col-12 col-md-4 d-none d-md-block">
             <%= form({action: "/todo", method: "GET"}) { %>
-            <div class="input-group">
-                <input id="search-tasks" type="text" class="form-control" placeholder="Search" name="keyword">
-                <button id="search-tasks-button" type="submit" class="btn btn-primary px-4 py-2 ">
-                    Search</button>
-            </div>
+                <div class="input-group">
+                    <input id="search-users" type="text" class="form-control" placeholder="Search" name="keyword">
+                    <button id="search-users-button" type="submit" class="btn btn-primary px-4 py-2 ">
+                        Search</button>
+                </div>
             <% } %>
         
         </div>
-        <a href="<%= newTodoPath() %>" class="col-12 col-md-6 d-flex justify-content-end"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
+        <div class="col-12 col-md-6 d-flex justify-content-end">
+            <a href="<%= newTodoPath() %>"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
                 Task</button>
         </a>
+        </div>
+     
     </div>
-    <div class="content mt-3 shadow-sm rounded">
+    <div class="content mt-3 shadow-sm rounded position-relative">
         <table id="table" class="table table-hover   shadow-sm  rounded overflow-scroll table-fixed m-0">
             <thead>
                 <tr class="top">
@@ -26,18 +29,21 @@
                     <%= if (current_user.Rol == "admin") { %>
                     <th class="py-3 fw-normal">User</th>
                     <% } %>
-                    <th class="py-3 fw-normal">Must be to</th>
+                    <th class="py-3 fw-normal">Complete by</th>
                     <th class="py-3 fw-normal text-center">Actions</th>
                 </tr>
             </thead>
-            <tbody class="rounded-bottom" id="items">
-
+            <tbody class="rounded-bottom " id="items">
+                <p id="text-table" class="opacity-75">
+                    There is no task.
+                </p>
                 <%= for (i) in tasks { %>
                     <tr class="tasks">
-                        <td class="pt-4 text-center px-0">
+                        <td class="pt-5 pt-md-4  text-center px-2">
                             <%= form({action: todoStatusTodoIDPath({todo_id:i.ID }) ,method:"PUT", id:"form-status"}) { %>
                                 <%= if (i.Status == true)  {%>
-                                    <button class="btn p-0" type="submit"> <i class="fa-solid fa-ban"></i></button>
+                                    
+                                    <button class="btn p-0" type="submit"><i class="fa-solid fa-ban"></i></button>
                                 <% } else { %>
                                     <button class="btn p-0" type="submit"><i class="fa-solid fa-circle-check"></i> </button>
                                 <% } %>
@@ -45,29 +51,26 @@
                             
                         
                         </td>
-                        <td class="pt-4 text-info bi show-description">
+                        <td class="pt-5 pt-md-4  text-info bi show-description">
                             <%= i.Title %>
                         </td>
                       
                         <%= if (current_user.Rol == "admin") { %>
-                        <td class="pt-4">
+                        <td class="pt-5 pt-md-4 ">
                             <%= i.User.Email %>
                         </td>
                         <% } %>
                        
-                        <td class="pt-4">
+                        <td class="pt-5 pt-md-4 ">
                             <%= i.Must.Day() %> <%= i.Must.Month() %>
                             <%= i.Must.Year() %>
                         </td>
-                        <td class="d-flex py-4 py-md-3   justify-content-center align-items-center ">
-                            <a href="<%= todoPath({todo_id: i.ID})%> ">
-                           
-                                <button type="button" class=" btn btn-success ms-2 submit  <%= isEdit(i) %> "><i
-                                        class="fas fa-edit"></i></button>
+                        <td class="d-flex py-5 py-md-4  justify-content-center align-items-center gap-4">
+                            <a href="<%= todoPath({todo_id: i.ID})%> " class="<%= isEdit(i) %>  ">
+                                <i class="fa-solid fa-pencil"></i>
                             </a>
                             <%= form({action: todoPath({todo_id: i.ID}) ,method:"DELETE"}) { %>
-                                    <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>"><i
-                                        class="far fa-trash-alt "></i></button>
+                                    <i class="far fa-trash-alt " data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>" ></i>
                                         <%= partial("todo/modal.plush.html", {ID : i.ID}) %>
                             <% } %> 
                         </td>
@@ -79,6 +82,16 @@
     <div class="d-flex justify-content-between pt-3 ">
             <%= paginator(pagination) %>
             <span class="opacity-25">Displaying <%= pagination.Offset + 1 %> - <%= pagination.Offset + pagination.PerPage %> of <%= pagination.TotalEntriesSize %></span> 
+    </div>
+    <div  class="col-12 col-md-4 pt-4 d-md-none">
+        <%= form({action: "/todo", method: "GET"}) { %>
+            <div class="input-group">
+                <input  type="text" class="form-control" placeholder="Search" name="keyword">
+                <button  type="submit" class="btn btn-primary px-4 py-2 ">
+                    Search</button>
+            </div>
+        <% } %>
+    
     </div>
     
 </section>

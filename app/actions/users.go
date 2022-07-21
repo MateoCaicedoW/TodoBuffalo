@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
@@ -40,7 +41,7 @@ func UsersList(c buffalo.Context) error {
 	// Add the paginator to the context so it can be used in the template.
 	c.Set("pagination", q.Paginator)
 	c.Set("users", users)
-
+	setUsers(tx, c)
 	return c.Render(http.StatusOK, r.HTML("/users/index.plush.html"))
 }
 
@@ -58,7 +59,7 @@ func UsersNew(c buffalo.Context) error {
 	user := &models.User{}
 
 	setRol(c)
-
+	setUsers(c.Value("tx").(*pop.Connection), c)
 	c.Set("user", user)
 	return c.Render(http.StatusOK, r.HTML("/users/new.plush.html"))
 }
@@ -86,6 +87,7 @@ func UsersCreate(c buffalo.Context) error {
 		c.Set("errors", verrs)
 		c.Set("user", user)
 		setRol(c)
+		setUsers(tx, c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/new.plush.html"))
 	}
 
@@ -129,7 +131,7 @@ func UsersEdit(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 	setRol(c)
-
+	setUsers(tx, c)
 	c.Set("user", user)
 	return c.Render(http.StatusOK, r.HTML("/users/edit.plush.html"))
 }
@@ -228,6 +230,11 @@ func UsersShow(c buffalo.Context) error {
 	}
 
 	c.Set("user", user)
+	count := len(user.Tasks)
+
+	message := strconv.Itoa(count) + " Tasks"
+	c.Set("message", message)
+	c.Set("count", count)
 	return c.Render(http.StatusOK, r.HTML("/users/show.plush.html"))
 }
 
@@ -239,4 +246,12 @@ func setRol(c buffalo.Context) {
 		c.Set("rol", rol)
 		c.Set("current_user", c.Value("current_user").(*models.User))
 	}
+}
+
+func setUsers(tx *pop.Connection, c buffalo.Context) {
+	users := models.User{}
+	count, _ := tx.Count(users)
+
+	message := strconv.Itoa(count) + " Users"
+	c.Set("message", message)
 }
