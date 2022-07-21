@@ -223,10 +223,7 @@ func UsersShow(c buffalo.Context) error {
 	if !ok {
 		return fmt.Errorf("no transaction found")
 	}
-	if err := tx.Find(user, c.Param("id")); err != nil {
-		return c.Error(http.StatusNotFound, err)
-	}
-	if err := tx.Eager("Tasks").Find(user, user.ID); err != nil {
+	if err := tx.Eager("Tasks").Find(user, c.Param("id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
@@ -242,22 +239,4 @@ func setRol(c buffalo.Context) {
 		c.Set("rol", rol)
 		c.Set("current_user", c.Value("current_user").(*models.User))
 	}
-}
-
-func SearchUsers(c buffalo.Context) error {
-	tx, ok := c.Value("tx").(*pop.Connection)
-	if !ok {
-		return fmt.Errorf("no transaction found")
-	}
-
-	q := tx.PaginateFromParams(c.Params())
-	q = q.Order("created_at desc")
-	users := []models.User{}
-	if err := q.Where("first_name LIKE ?", "%"+c.Param("name")+"%").All(&users); err != nil {
-		return c.Error(http.StatusNotFound, err)
-	}
-	// Add the paginator to the context so it can be used in the template.
-	c.Set("pagination", q.Paginator)
-	c.Set("users", users)
-	return c.Render(http.StatusOK, r.HTML("/users/index.plush.html"))
 }

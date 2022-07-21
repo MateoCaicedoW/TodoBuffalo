@@ -31,6 +31,13 @@ var Helpers = map[string]interface{}{
 	"admin":         Admin,
 	"adminPermiss":  AdminPermiss,
 	"redirect":      Redirect,
+	"isEdit": func(i models.Task) string {
+		if i.Status == true {
+			return "d-none"
+		}
+		return "d-block"
+
+	},
 }
 
 func currentUser(c plush.HelperContext) bool {

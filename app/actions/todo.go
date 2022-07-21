@@ -2,7 +2,6 @@ package actions
 
 import (
 	"TodoBuffalo/app/models"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -17,7 +16,7 @@ type TodoResource struct {
 }
 
 func (t TodoResource) List(c buffalo.Context) error {
-
+	tasks := []models.Task{}
 	tx := c.Value("tx").(*pop.Connection)
 
 	keyword := "%" + strings.ToLower(c.Param("keyword")) + "%"
@@ -28,24 +27,26 @@ func (t TodoResource) List(c buffalo.Context) error {
 
 	u := c.Value("current_user").(*models.User)
 
-	user := models.User{}
 	if u.Rol != "admin" {
 
-		if err := q.Eager().Where("user_id =?", u.ID).Where("(lower(title)  LIKE ? ) ", keyword).All(&user.Tasks); err != nil {
+		// if err := q.RawQuery("select t.id, t.title, t.must, t.user_id, t.status from tasks t, users u where t.user_id = u.id and lower(title) LIKE ? and u.id = ?", keyword, u.ID).All(&tasks); err != nil {
+		// 	return err
+		// }
+
+		if err := q.Eager().Where("user_id =?", u.ID).Where("(lower(title)  LIKE ? ) ", keyword).All(&tasks); err != nil {
 			return err
 		}
 
 	}
 
 	if u.Rol == "admin" {
-		if err := q.Eager().Where("lower(title) LIKE ?  ", keyword).All(&user.Tasks); err != nil {
+		if err := q.Eager().Where("lower(title) LIKE ?  ", keyword).All(&tasks); err != nil {
 			return err
 		}
 	}
 
-	fmt.Println("pagination", q.Paginator)
 	c.Set("current_user", u)
-	c.Set("user", user)
+	c.Set("tasks", tasks)
 	c.Set("pagination", q.Paginator)
 	return c.Render(http.StatusOK, r.HTML("todo/index.plush.html"))
 }
@@ -167,6 +168,11 @@ func Status(c buffalo.Context) error {
 	if err := tx.Eager().Find(taskTemp, id); err != nil {
 		return err
 	}
+	if taskTemp.Status {
+		c.Flash().Add("error", "This task is already completed!")
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+
 	taskTemp.Status = !taskTemp.Status
 	if err := tx.Eager().Update(taskTemp); err != nil {
 		return err

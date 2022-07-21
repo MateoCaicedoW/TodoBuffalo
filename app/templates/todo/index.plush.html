@@ -32,7 +32,7 @@
             </thead>
             <tbody class="rounded-bottom" id="items">
 
-                <%= for (i) in user.Tasks { %>
+                <%= for (i) in tasks { %>
                     <tr class="tasks">
                         <td class="pt-4 text-center px-0">
                             <%= form({action: "/todo/status/" +i.ID ,method:"PUT", id:"form-status"}) { %>
@@ -56,11 +56,13 @@
                         <% } %>
                        
                         <td class="pt-4">
-                            <%= i.Must.Format("2006-02-01") %>
+                            <%= i.Must.Day() %> <%= i.Must.Month() %>
+                            <%= i.Must.Year() %>
                         </td>
-                        <td class="d-flex py-4 py-md-3   justify-content-center align-items-center">
+                        <td class="d-flex py-4 py-md-3   justify-content-center align-items-center ">
                             <a href="<%= todoPath({todo_id: i.ID})%> ">
-                                <button type="button" class="btn btn-success ms-2 submit"><i
+                           
+                                <button type="button" class=" btn btn-success ms-2 submit  <%= isEdit(i) %> "><i
                                         class="fas fa-edit"></i></button>
                             </a>
                             <%= form({action: todoPath({todo_id: i.ID}) ,method:"DELETE"}) { %>
