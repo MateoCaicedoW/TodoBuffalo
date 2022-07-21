@@ -46,6 +46,7 @@ func (t TodoResource) List(c buffalo.Context) error {
 		}
 	}
 	setMessage(tx, c)
+	SetTime(c)
 	c.Set("current_user", u)
 	c.Set("tasks", tasks)
 	c.Set("pagination", q.Paginator)
@@ -66,6 +67,7 @@ func (t TodoResource) New(c buffalo.Context) error {
 
 	c.Set("task", task)
 	setMessage(tx, c)
+	SetTime(c)
 	return c.Render(http.StatusOK, r.HTML("todo/new.plush.html"))
 }
 
@@ -84,9 +86,12 @@ func (t TodoResource) Create(c buffalo.Context) error {
 		return err
 	}
 	task.Status = false
-
 	if err := validateCreateAndUpdate(c, task, tx, users); err != "" {
+
+		setMessage(tx, c)
+		SetTime(c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("todo/new.plush.html"))
+
 	}
 
 	if err := tx.Eager().Create(task); err != nil {
@@ -113,7 +118,7 @@ func (t TodoResource) Show(c buffalo.Context) error {
 	}
 	setMessage(tx, c)
 	findUsers(c, tx, users)
-
+	SetTime(c)
 	c.Set("task", task)
 	return c.Render(http.StatusOK, r.HTML("todo/edit.plush.html"))
 }
@@ -136,7 +141,8 @@ func (t TodoResource) Update(c buffalo.Context) error {
 	}
 
 	if err := validateCreateAndUpdate(c, taskTemp, tx, users); err != "" {
-
+		setMessage(tx, c)
+		SetTime(c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("todo/edit.plush.html"))
 	}
 
@@ -174,6 +180,7 @@ func Status(c buffalo.Context) error {
 	}
 
 	taskTemp.Status = !taskTemp.Status
+	taskTemp.Complete = time.Now()
 	if err := tx.Eager().Update(taskTemp); err != nil {
 		return err
 	}
@@ -186,6 +193,21 @@ func Status(c buffalo.Context) error {
 	}
 
 	return c.Redirect(http.StatusSeeOther, "/")
+}
+
+func ShowInformation(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	setMessage(tx, c)
+	SetTime(c)
+	task := &models.Task{}
+
+	if err := tx.Eager("User").Find(task, c.Param("todo_id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	c.Set("task", task)
+
+	return c.Render(http.StatusOK, r.HTML("todo/show.plush.html"))
 }
 
 func findUsers(c buffalo.Context, tx *pop.Connection, users []models.User) {
@@ -225,4 +247,9 @@ func setMessage(tx *pop.Connection, c buffalo.Context) {
 
 	message := strconv.Itoa(count) + " Tasks"
 	c.Set("message", message)
+}
+
+func SetTime(c buffalo.Context) {
+	time := time.Now()
+	c.Set("time", time)
 }

@@ -42,6 +42,7 @@ func UsersList(c buffalo.Context) error {
 	c.Set("pagination", q.Paginator)
 	c.Set("users", users)
 	setUsers(tx, c)
+	SetTime(c)
 	return c.Render(http.StatusOK, r.HTML("/users/index.plush.html"))
 }
 
@@ -59,6 +60,7 @@ func UsersNew(c buffalo.Context) error {
 	user := &models.User{}
 
 	setRol(c)
+	SetTime(c)
 	setUsers(c.Value("tx").(*pop.Connection), c)
 	c.Set("user", user)
 	return c.Render(http.StatusOK, r.HTML("/users/new.plush.html"))
@@ -87,6 +89,7 @@ func UsersCreate(c buffalo.Context) error {
 		c.Set("errors", verrs)
 		c.Set("user", user)
 		setRol(c)
+		SetTime(c)
 		setUsers(tx, c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/new.plush.html"))
 	}
@@ -132,6 +135,7 @@ func UsersEdit(c buffalo.Context) error {
 	}
 	setRol(c)
 	setUsers(tx, c)
+	SetTime(c)
 	c.Set("user", user)
 	return c.Render(http.StatusOK, r.HTML("/users/edit.plush.html"))
 }
@@ -172,11 +176,14 @@ func UsersUpdate(c buffalo.Context) error {
 	}
 
 	fmt.Println("userTemp", userTemp)
-
-	if verrs, _ := userTemp.ValidateUpdate(tx); verrs.HasAny() {
+	verrs, verr2 := userTemp.ValidateUpdate(tx)
+	if verrs.HasAny() && verr2.HasAny() {
+		verrs.Append(verr2)
 		c.Set("errors", verrs)
 		c.Set("user", userTemp)
 		setRol(c)
+		SetTime(c)
+		setUsers(tx, c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("/users/edit.plush.html"))
 	}
 
@@ -235,6 +242,7 @@ func UsersShow(c buffalo.Context) error {
 	message := strconv.Itoa(count) + " Tasks"
 	c.Set("message", message)
 	c.Set("count", count)
+	SetTime(c)
 	return c.Render(http.StatusOK, r.HTML("/users/show.plush.html"))
 }
 

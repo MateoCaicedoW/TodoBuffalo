@@ -1,0 +1,93 @@
+<section class="container-xxl">
+
+    <div class="row px-2 gap-3">
+        <div class="bg-white shadow-sm px-5 py-4 d-flex flex-column justify-content-center align-items-center card-user col-12 col-md-4 rounded-3">
+            <img src="/assets/images/user.png" alt="a"  width="130px">
+            <div class="text-center">
+                <h5 class=" text-uppercase"></h5>
+                
+            </div>
+        </div>
+        <div class="bg-white shadow-sm col height-card p-4 d-flex flex-column gap-4 rounded-3" >
+            <div class="row">
+                <h5 class="col-6">First Name</h5>
+                <p class="m-0 text-muted col-6 text-uppercase"> <%= task.User.FirstName %></p>
+            </div> 
+            <div class="row">
+                <h5 class="col-6">Last Name</h5>
+                <p class="m-0 text-muted col-6 text-uppercase"> <%= task.User.LastName %></p>
+            </div>
+            <div class="row">
+                <h5 class="col-6" >Rol</h5>
+                <p class="m-0 text-muted col-6"> <%= task.User.Rol %></p>
+            </div>
+            <div class="row border-0">
+                <h5 class="col-6" >Email</h5>
+                <p class="m-0 text-muted col-6"> <%= task.User.Email %></p>
+            </div>
+        </div>
+
+
+
+    </div>
+    <section class="row pt-3 px-2">
+        <div class="bg-white shadow-sm col-12  p-4 d-flex flex-column gap-4 rounded-3">
+            <h1 class="text-center fw-bold text-uppercase text-muted">Task information</h1>
+            <%= if (count == 0) { %>
+                <div class="d-flex justify-content-center">
+                    <h5 class="text-center">There is no tasks yet.</h5>
+                    
+                </div>
+               
+             <% } %>
+            <div class="task-container p-3  d-flex gap-3">
+               
+             
+                  
+                    <div class="  bg-white border-radius col-12 height-card p-4 d-flex flex-column gap-4">
+                        <div class="row">
+                            <h5 class="col-6">Title</h5>
+                            <p class="m-0 text-muted col-6"><%= task.Title %></p>
+                        </div> 
+                        <div class="row">
+                            <h5 class="col-6">Must be</h5>
+                            <p class="m-0 text-muted col-6"><%= task.Must.Day() %>  <%= task.Must.Month() %> <%= task.Must.Year() %></p>
+                        </div>
+                        <div class="row">
+                            <h5 class="col-6" >Description</h5>
+                            <p class="m-0 text-muted col-6"><%= task.Description %></p>
+                        </div>
+                        <div class="row ">
+                            <h5 class="col-6" >Status</h5>
+                            <p class="m-0 text-muted col-6">
+                                <%= if (task.Status) { %>
+                                    Completed
+                                <% } else { %>
+                                    Pending
+                                <% } %>
+                            </p>
+                        </div>
+                        <div class="row border-0">
+                            <h5 class="col-6" >Complete By</h5>
+                           
+                            <p class="m-0 text-muted col-6">
+                                <%= if (task.Complete.Format("2006-01-02") == "0001-01-01") { %>
+                                    Pending
+                                    <% } else { %>
+                                        <%= task.Complete.Day() %>  <%= task.Complete.Month() %> <%= task.Complete.Year() %></p>
+                                    <% } %>
+                               
+                        </div>
+                        
+                    </div>
+            
+                
+                
+                
+            </div>
+        </div>
+
+    </section>
+  
+ 
+</section>

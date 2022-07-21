@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"time"
@@ -36,11 +37,9 @@ func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, *validate.E
 	return err, err2
 }
 func (u *User) ValidateUpdate(tx *pop.Connection) (*validate.Errors, *validate.Errors) {
-	var err *validate.Errors
-	if u.Password != "" {
-		err, _ = u.ValidatePass()
-	}
+	err, _ := u.ValidatePass()
 	err2, _ := u.Validate(tx)
+	fmt.Println(err2)
 	return err, err2
 }
 

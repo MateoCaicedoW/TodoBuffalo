@@ -2,21 +2,31 @@
 <header class="shadow-lg py-3 px-5 mb-3 rounded-bottom head row m-0">
     
         <nav class="navbar navbar-expand-lg navbar-dark head">
-            <div class="container-fluid p-0">
+            <div class="container-fluid p-0
+            <%= if (!currentUser()) { %>
+                justify-content-center
+            <% } %>
+            
+            ">
                 <div id="text-left" class="row col-6   d-flex justify-content-start w-auto ">
-                    <div class="text-todo col-4 ps-4">
+                    <div class="text-todo col-4 ps-4   <%= if (!currentUser()) { %>
+                        border-0
+                        <% } %> ">
                         <h2 class="text-white fs-3 py-1 m-0">
                             ToDo List 
                         </h2>
                     </div>
+                    <%= if (currentUser()) { %>
                     <div id ="text-bottom"class="row col  ms-1 d-flex justify-content-center ">
                         <div class="col-12">
                             <p class="text-white m-0" id="text-top-bar"><%= message %></p>
                         </div>
                         <div class="col-12 m-0 align-items-center">
-                            <p id="date" class="text-white fw-light day m-0">Thursday 06, June 2019</p>
+                            <p id="date" class="text-white fw-light day m-0"> <%= time.Day() %> <%= time.Month() %>,
+                                <%= time.Year() %></p>
                         </div>
                     </div>
+                   
                 </div>
               
                 <%= if (currentUser()) { %>

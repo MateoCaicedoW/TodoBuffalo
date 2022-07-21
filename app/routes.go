@@ -37,5 +37,6 @@ func setRoutes(root *buffalo.App) {
 
 	root.Resource("/todo", actions.TodoResource{})
 	root.PUT("/todo/status/{todo_id}", actions.Status)
+	root.GET("/todo/show/{todo_id}", actions.ShowInformation)
 	root.ServeFiles("/", http.FS(public.FS()))
 }

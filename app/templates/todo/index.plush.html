@@ -29,7 +29,7 @@
                     <%= if (current_user.Rol == "admin") { %>
                     <th class="py-3 fw-normal">User</th>
                     <% } %>
-                    <th class="py-3 fw-normal">Complete by</th>
+                    <th class="py-3 fw-normal">Must be</th>
                     <th class="py-3 fw-normal text-center">Actions</th>
                 </tr>
             </thead>
@@ -52,7 +52,8 @@
                         
                         </td>
                         <td class="pt-5 pt-md-4  text-info bi show-description">
-                            <%= i.Title %>
+                            <a class="text-info hover" href="    <%= todoShowTodoIDPath({todo_id: i.ID})  %>" >   <%= i.Title %></a> 
+                         
                         </td>
                       
                         <%= if (current_user.Rol == "admin") { %>
@@ -95,3 +96,4 @@
     </div>
     
 </section>
+

@@ -17,6 +17,7 @@ type Task struct {
 	UserID      uuid.UUID `db:"user_id" `
 	Must        time.Time `db:"must" `
 	Status      bool      `db:"status" `
+	Complete    time.Time `db:"completeby" `
 	User        *User     `belongs_to:"users"`
 }
 

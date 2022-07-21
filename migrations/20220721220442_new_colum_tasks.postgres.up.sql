@@ -1,0 +1,1 @@
+ALTER TABLE "tasks" ADD COLUMN "completeby" date NOT NULL DEFAULT '2020-01-01';
