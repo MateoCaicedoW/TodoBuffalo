@@ -79,7 +79,7 @@ table tbody{
     position: absolute;
     bottom: 0;
     right: 0;
-    max-width: 400px;
+    width: 100vw;
     margin-top: 20px !important;
     transition: all 1s linear;
     #flash-error{
@@ -150,25 +150,28 @@ table tbody{
 .button:focus{
     outline: none !important;
 }
-.container-login, .new-user-container{
+.container-login{
     /* centrar vertical y horizontalmente */
-    
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 
 }
-.new-user-container{
-    width: auto;
-}
+
 .card-user{
     height: 250px;
 }
 
+
+.word-wrap{
+    word-wrap: break-word;
+}
 .height-card{
     div{
         border-bottom: 0.5px solid #e2e2e2;
+        min-height: 50px;
+        word-wrap: break-word;
     }
 
     p{
@@ -231,10 +234,8 @@ table tbody{
     #text-left{
         width: 230px !important;
     }
-
-    
-
 }
+
 @media (max-width: 470px) {
     header{
         display: flex;
@@ -254,6 +255,15 @@ table tbody{
     }
   
 
+    
+}
+@media  (max-height: 607px){
+    .container-login{
+       position: inherit;
+       top: auto;
+       left: auto;
+       transform: none;
+    }
     
 }
 
@@ -294,9 +304,38 @@ table tbody{
       display: grid;
       align-content: center;
       transition: .4s;
+      z-index: 1;
+      box-shadow: 0 -1px 12px rgb(154, 154, 154);
+      
     }
+
+    #flash{
+        
+        background-color: #c9deeb64; 
+        transition: none;
+        bottom: auto;
+        z-index: 2;
+        right: inherit;
+        height: 100vh;
+        margin-top: 0 !important;
+        #flash-success, #flash-error{
+            max-width: 320px;
+            height: 100px;
+            position: absolute;
+            top: 50%;
+        }
+    }
+
+    main{
+        padding-bottom: 8rem;
+    }
+
     
-  }
+}
+.search-bottom{
+    position: inherit;
+    z-index: 0 !important;
+}
 
 
 

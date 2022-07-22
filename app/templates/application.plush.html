@@ -13,16 +13,16 @@
 </head>
 <body class="position-relative">
  
-
+  <%= partial("partials/flash.plush.html")%>
  
   <%= partial("partials/header.plush.html") %>
  
-	<main class="container mt-4">
+	<main id="main" class="container mt-4 ">
    
 		<%= yield %>
     
    
 	</main>
-  <%= partial("partials/flash.plush.html")%>
+ 
 </body>
 </html>

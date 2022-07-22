@@ -4,11 +4,25 @@ require("bootstrap/dist/js/bootstrap.bundle.js");
 require("@fortawesome/fontawesome-free/js/all.js");
 
 let flash = document.getElementById("flash")
+let main = document.getElementById("main")
+
+
+setInterval(() => {
+    if (!flash.classList.contains("d-none")){
+        main.classList.add("p-0")
+        
+     }else{
+        main.classList.remove("p-0")
+     }
+}, 100);
+
+
 
 flash.addEventListener("click", (e) => {
     ev = e.target
     if (ev.classList.contains("close-flash")) {
         flash.classList.add("d-none")
+        modal.classList.add("d-none")
     }
 })
 
@@ -17,7 +31,7 @@ setTimeout(() => {
     flash.style.opacity = 0
     setTimeout(() => {
         flash.classList.add("d-none")
-    }, 3000)   
+    }, 2000)   
 
     
 }, 2000)
