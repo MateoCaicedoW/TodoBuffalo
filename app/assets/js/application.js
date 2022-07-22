@@ -26,3 +26,6 @@ if (table.childNodes.item(3).childNodes.length !=1) {
     document.querySelector("#text-table").classList.add("d-none")
     
 }
+// function preventBack(){window.history.forward();}
+// setTimeout(preventBack(), 0);
+// window.onunload=function(){null};

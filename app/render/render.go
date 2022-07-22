@@ -5,6 +5,7 @@ import (
 	"TodoBuffalo/app/templates"
 	"TodoBuffalo/public"
 
+	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/render"
 	"github.com/gobuffalo/plush/v4"
 	"github.com/wawandco/ox/pkg/buffalotools"
@@ -38,6 +39,7 @@ var Helpers = map[string]interface{}{
 		return "d-block"
 
 	},
+	"isActive": activeClass,
 }
 
 func currentUser(c plush.HelperContext) bool {
@@ -73,4 +75,15 @@ func Redirect(c plush.HelperContext) string {
 		return "/users"
 	}
 	return "/"
+}
+
+func activeClass(n string, help plush.HelperContext) string {
+
+	if p, ok := help.Value("current_route").(buffalo.RouteInfo); ok {
+
+		if p.PathName == n {
+			return "custom-active"
+		}
+	}
+	return ""
 }

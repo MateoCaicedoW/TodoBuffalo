@@ -25,12 +25,12 @@
                         </h2>
                     </div>
                     <%= if (currentUser()) { %>
-                    <div id ="text-bottom"class="row col-12 col-md-6 ms-1  ms-md-0 d-flex justify-content-center ">
+                    <div id ="text-bottom"class=" row col-12 col-md-6 ms-1  ms-md-0 ">
                         <div class="col-12">
-                            <p class="text-white m-0" id="text-top-bar"><%= message %></p>
+                            <p class="text-white m-0 text-md-start" id="text-top-bar"><%= message %></p>
                         </div>
                         <div class="col-12 m-0 align-items-center">
-                            <p id="date" class="text-white fw-light day m-0"> <%= time.Day() %> <%= time.Month() %>,
+                            <p id="date" class="text-white fw-light day m-0 text-md-start"> <%= time.Day() %> <%= time.Month() %>,
                                 <%= time.Year() %></p>
                         </div>
                     </div>
@@ -41,13 +41,16 @@
                 
                 <div class=" nav-menu justify-content-center justify-content-md-center" >
                     <div class="d-flex">
-                    
-                            <a  class=" nav-link text-white  d-flex flex-column-reverse"  href="/"><span >Tasks</span>  <i  class="fa-solid fa-list-check fa-2x  d-md-none"></i></a>
+                        
+                            <a  class=" nav-link text-white  d-flex flex-column-reverse 
+                            <%= isActive("todoPath") %>   <%= isActive("todoShowTodoIDPath") %> <%= isActive("newTodoPath") %> 
+                            "  href="/todo"><span >Tasks</span>  <i  class="fa-solid fa-list-check fa-2x  d-md-none"></i></a>
                             <%= if (admin()) { %>
-                                <a  class="nav-link text-white d-flex flex-column-reverse "  href="/users"> <span >Users</span>  <i class="fa-solid fa-user fa-2x d-md-none"></i></a>
+                                <a  class="nav-link text-white d-flex flex-column-reverse 
+                                <%= isActive("usersPath") %>   <%= isActive("newUsersPath") %> <%= isActive("editUsersPath") %>  <%= isActive("usersShowPath") %>  "  href="/users"> <span >Users</span>  <i class="fa-solid fa-user fa-2x d-md-none"></i></a>
                             <% } %>
                             <%= form({action: signoutPath(),method:"DELETE"}) { %>
-                                <button class="btn text-white d-flex flex-column-reverse " type="submit"> <span >Sign out</span> <i class="fa-solid fa-arrow-right-from-bracket fa-2x  d-md-none d-flex align-self-center"></i></button>
+                                <button class="button nav-link text-white d-flex flex-column-reverse " type="submit"> <span >Sign out</span> <i class="fa-solid fa-arrow-right-from-bracket fa-2x  d-md-none d-flex align-self-center"></i></button>
                                     <% } %>
                                
                              <% } %> 

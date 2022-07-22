@@ -128,21 +128,30 @@ table tbody{
 }
 
 .custom-active{
-    color:rgb(100, 102, 103) !important;
+    color: rgb(197, 222, 233) !important;
 }
 
 .nav-link:hover{
-    color:rgb(100, 102, 103)  !important;
+    color: rgb(197, 222, 233) !important;
+
 }
 
 
 .login-content{
     width: 100%;
 }
+.button{
+    outline: none;
+    background-color: transparent;
+    border: 0;
+}
 
+.button:focus{
+    outline: none !important;
+}
 .container-login, .new-user-container{
     /* centrar vertical y horizontalmente */
-    width: 400px;
+    
     position: absolute;
     top: 50%;
     left: 50%;
@@ -246,10 +255,14 @@ table tbody{
 
     
 }
+
+#new-task{
+   max-width: 630px;
+}
+
+
 @media (max-width:447px) {
-    #new-task, #edit-task{
-        width: 75% !important;
-    }
+    
     .buttons{
         display: flex;
         flex-direction: column-reverse;
