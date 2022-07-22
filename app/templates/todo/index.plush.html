@@ -29,7 +29,7 @@
                     <%= if (current_user.Rol == "admin") { %>
                     <th class="py-3 fw-normal">User</th>
                     <% } %>
-                    <th class="py-3 fw-normal">Must be</th>
+                    <th  class="py-3 fw-normal">Must be</th>
                     <th class="py-3 fw-normal text-center">Actions</th>
                 </tr>
             </thead>
@@ -62,13 +62,13 @@
                         </td>
                         <% } %>
                        
-                        <td class="pt-5 pt-md-4 ">
+                        <td  class="pt-5 pt-md-4 ">
                             <%= i.Must.Day() %> <%= i.Must.Month() %>
                             <%= i.Must.Year() %>
                         </td>
                         <td class="d-flex py-5 py-md-4  justify-content-center align-items-center gap-4">
                             <a href="<%= todoPath({todo_id: i.ID})%> " class="<%= isEdit(i) %>  ">
-                                <i class="fa-solid fa-pencil"></i>
+                                <i class="fa-solid fa-pencil "></i>
                             </a>
                             <%= form({action: todoPath({todo_id: i.ID}) ,method:"DELETE",  class: "py-2 py-md-0"}) { %>
                                     <i class="far fa-trash-alt " data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>" ></i>
