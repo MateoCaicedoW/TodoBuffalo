@@ -62,7 +62,6 @@ func AuthDestroy(c buffalo.Context) error {
 }
 
 func bad(c buffalo.Context, u *models.User) error {
-
 	c.Set("user", u)
 	verrs := validate.NewErrors()
 	verrs.Add("email", "invalid email/password")

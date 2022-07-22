@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 	"time"
@@ -32,15 +31,19 @@ type User struct {
 }
 
 func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, *validate.Errors) {
-	err, _ := u.ValidatePass()
+	err := u.ValidatePass()
 	err2, _ := u.Validate(tx)
 	return err, err2
 }
 func (u *User) ValidateUpdate(tx *pop.Connection) (*validate.Errors, *validate.Errors) {
-	err, _ := u.ValidatePass()
 	err2, _ := u.Validate(tx)
-	fmt.Println(err2)
-	return err, err2
+	err := *validate.NewErrors()
+
+	if u.Password != "" {
+		err = *u.ValidatePass()
+		return &err, err2
+	}
+	return &err, err2
 }
 
 func (u *User) Create(tx *pop.Connection) (*validate.Errors, error) {
@@ -53,8 +56,9 @@ func (u *User) Create(tx *pop.Connection) (*validate.Errors, error) {
 	return tx.ValidateAndCreate(u)
 }
 
-func (u *User) ValidatePass() (*validate.Errors, error) {
-	var err error
+func (u *User) ValidatePass() *validate.Errors {
+	u.Password = strings.Replace(u.Password, " ", "", -1)
+	u.PasswordConfirmation = strings.Replace(u.PasswordConfirmation, " ", "", -1)
 	return validate.Validate(
 		&validators.FuncValidator{
 			Fn: func() bool {
@@ -94,7 +98,7 @@ func (u *User) ValidatePass() (*validate.Errors, error) {
 			Name:    "Password",
 			Message: "%s Password is required.",
 		},
-	), err
+	)
 }
 
 func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {

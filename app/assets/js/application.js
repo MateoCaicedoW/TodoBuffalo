@@ -19,6 +19,8 @@ flash.addEventListener("click", (e) => {
 // let searchTasks = document.querySelector("#search-tasks")
 // let tasks = document.querySelectorAll(".tasks")
 
+   
+
 let table = document.querySelector("#table")
 if (table.childNodes.item(3).childNodes.length !=1) {
     document.querySelector("#text-table").classList.add("d-none")

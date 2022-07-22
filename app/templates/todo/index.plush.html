@@ -70,7 +70,7 @@
                             <a href="<%= todoPath({todo_id: i.ID})%> " class="<%= isEdit(i) %>  ">
                                 <i class="fa-solid fa-pencil"></i>
                             </a>
-                            <%= form({action: todoPath({todo_id: i.ID}) ,method:"DELETE"}) { %>
+                            <%= form({action: todoPath({todo_id: i.ID}) ,method:"DELETE",  class: "py-2 py-md-0"}) { %>
                                     <i class="far fa-trash-alt " data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>" ></i>
                                         <%= partial("todo/modal.plush.html", {ID : i.ID}) %>
                             <% } %> 

@@ -175,10 +175,10 @@ func UsersUpdate(c buffalo.Context) error {
 		userTemp.PasswordHash = string(hashPass)
 	}
 
-	fmt.Println("userTemp", userTemp)
 	verrs, verr2 := userTemp.ValidateUpdate(tx)
-	if verrs.HasAny() && verr2.HasAny() {
-		verrs.Append(verr2)
+	verrs.Append(verr2)
+
+	if verrs.HasAny() {
 		c.Set("errors", verrs)
 		c.Set("user", userTemp)
 		setRol(c)

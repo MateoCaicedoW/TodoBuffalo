@@ -52,7 +52,7 @@ var _ = grift.Add("create:users:admin", func(c *grift.Context) error {
 	tx.Where("email = ?", user.Email).First(userTemp)
 
 	if userTemp.Email != "" {
-		return errors.New("User already exists=> Email: " + user.Email + " Password: " + user.Password)
+		return errors.New("User already exists=> Email: " + userTemp.Email + " Password: " + user.Password)
 	}
 
 	pass, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)

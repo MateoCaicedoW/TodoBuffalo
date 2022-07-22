@@ -73,10 +73,6 @@ table tbody{
 .desactive{
     color:  #eb8c8c;;
 }
-#text-left .text-todo{
-    width: 180px;
-}
-
 
 
 #flash{
@@ -189,21 +185,23 @@ table tbody{
     left: 50%;
     transform: translate(-50%, -50%);
 }
-
-@media (max-width: 802px) {
-    #text-left{
-        display: flex;
-        flex-direction: column;
-    }
+@media (max-width: 767px) {
     #text-left .text-todo{
         border: 0;
         border-bottom: 2px solid white;
         padding-bottom: 5px;
     }
+
+    
+}
+
+@media (max-width: 802px) {
+   
+ 
     #text-bottom{
         display: flex;
         flex-direction: row !important ; 
-        width: 300px;
+    
         padding: 0px;
         padding-top: 5px;
     }
@@ -244,10 +242,7 @@ table tbody{
         align-items: center;
         padding-bottom: 10px;
     }
-    .text-todo,#text-bottom{
-        text-align: center;
-        margin: 0px;
-    }
+  
 
     
 }
@@ -272,3 +267,19 @@ table tbody{
     
 }
 
+
+@media screen and (max-width: 767px) {
+    .nav-menu {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      background-color:rgb(101, 176, 206);
+      width: 100%;
+      height: 6rem;
+      padding: 0 1rem;
+      display: grid;
+      align-content: center;
+      transition: .4s;
+    }
+    
+  }
