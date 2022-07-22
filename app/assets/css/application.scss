@@ -81,6 +81,7 @@ table tbody{
     right: 0;
     max-width: 400px;
     margin-top: 20px !important;
+    transition: all 1s linear;
     #flash-error{
         background: #eb8c8c;
         span{
@@ -296,3 +297,18 @@ table tbody{
     }
     
   }
+
+
+
+@keyframes fadeIn {
+  
+    from{
+        opacity: 1;
+    }
+    to{
+        opacity: 0;
+    }
+    
+    
+    
+} 

@@ -12,6 +12,17 @@ flash.addEventListener("click", (e) => {
     }
 })
 
+setTimeout(() => {
+    flash.style.animation ="fadeIn 1s ease-out"
+    flash.style.opacity = 0
+    setTimeout(() => {
+        flash.classList.add("d-none")
+    }, 3000)   
+
+    
+}, 2000)
+
+
 
 // let searchUser = document.querySelector("#search-users")
 // let users = document.querySelectorAll(".user")
@@ -29,3 +40,4 @@ if (table.childNodes.item(3).childNodes.length !=1) {
 // function preventBack(){window.history.forward();}
 // setTimeout(preventBack(), 0);
 // window.onunload=function(){null};
+
