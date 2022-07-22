@@ -198,6 +198,11 @@ table tbody{
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+thead{
+    position: sticky !important;
+    top: 0 !important;
+}
 @media (max-width: 767px) {
     #text-left .text-todo{
         border: 0;

@@ -9,10 +9,10 @@ let main = document.getElementById("main")
 
 setInterval(() => {
     if (!flash.classList.contains("d-none")){
-        main.classList.add("p-0")
+        main.classList.add("pb-0")
         
      }else{
-        main.classList.remove("p-0")
+        main.classList.remove("pb-0")
      }
 }, 100);
 

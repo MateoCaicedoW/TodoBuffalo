@@ -31,6 +31,7 @@ func UsersList(c buffalo.Context) error {
 	// Default values are "page=1" and "per_page=20".
 	q := tx.PaginateFromParams(c.Params())
 	q = q.Order("created_at desc")
+
 	// Retrieve all Users from the DB
 	keyword := "%" + strings.ToLower(c.Param("keyword")) + "%"
 	if err := q.Where("lower(first_name) LIKE ? or lower(last_name) LIKE ? or lower(email) LIKE ? ", keyword, keyword, keyword).
@@ -38,6 +39,7 @@ func UsersList(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
+	fmt.Println(q.Paginator)
 	// Add the paginator to the context so it can be used in the template.
 	c.Set("pagination", q.Paginator)
 	c.Set("users", users)
