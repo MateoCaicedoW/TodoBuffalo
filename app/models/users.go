@@ -107,7 +107,7 @@ func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
 		&validators.StringIsPresent{Field: u.FirstName, Name: "First Name"},
 		&validators.FuncValidator{
 			Fn: func() bool {
-				if u.FirstName != "" && !regexp.MustCompile(`^[a-zA-Z]+$`).MatchString(u.FirstName) {
+				if u.FirstName != "" && !regexp.MustCompile(`^[a-zA-Z ]+$`).MatchString(u.FirstName) {
 					return false
 				}
 				return true
@@ -117,7 +117,7 @@ func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
 		},
 		&validators.FuncValidator{
 			Fn: func() bool {
-				if u.LastName != "" && !regexp.MustCompile(`^[a-zA-Z]+$`).MatchString(u.LastName) {
+				if u.LastName != "" && !regexp.MustCompile(`^[a-zA-Z ]+$`).MatchString(u.LastName) {
 					return false
 				}
 				return true
