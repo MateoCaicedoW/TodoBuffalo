@@ -5,20 +5,28 @@ import (
 	"errors"
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/markbates/grift/grift"
 	"github.com/wawandco/fako"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var _ = grift.Add("create:task", func(c *grift.Context) error {
+	var user models.User
+	fako.Fill(&user)
+	user.Rol = "user"
+	hash, _ := bcrypt.GenerateFromPassword([]byte("12345678"), bcrypt.DefaultCost)
+	user.PasswordHash = string(hash)
+	if err := models.DB().Eager().Create(&user); err != nil {
+		return err
+	}
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 26; i++ {
 		var task models.Task
 		fako.Fill(&task)
 		task.Must = time.Now()
 		task.Status = false
-		task.UserID = uuid.FromStringOrNil("8b04e3a0-853c-417e-aa19-b098e11e7123")
+		task.UserID = user.ID
+		task.User = &user
 		if err := models.DB().Eager().Create(&task); err != nil {
 			return err
 		}
@@ -28,9 +36,12 @@ var _ = grift.Add("create:task", func(c *grift.Context) error {
 
 var _ = grift.Add("create:users", func(c *grift.Context) error {
 
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 2; i++ {
 		var user models.User
 		fako.Fill(&user)
+		user.Rol = "user"
+		hash, _ := bcrypt.GenerateFromPassword([]byte("12345678"), bcrypt.DefaultCost)
+		user.PasswordHash = string(hash)
 		if err := models.DB().Eager().Create(&user); err != nil {
 			return err
 		}

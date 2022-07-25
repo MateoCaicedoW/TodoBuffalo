@@ -1,89 +1,108 @@
 <section class="layout-add d-flex flex-column">
-    
+
     <div class="justify-content-between row g-2 ">
-        <div  class="col-12 col-md-4 d-none d-md-block">
-            <%= form({action: "/users", method: "GET"}) { %>
+        <div class="col-12 col-md-4 d-none d-md-block">
+            <%= form({action: "/users" , method: "GET" }) { %>
                 <div class="input-group">
                     <input id="search-users" type="text" class="form-control" placeholder="Search" name="keyword">
                     <button id="search-users-button" type="submit" class="btn btn-primary px-4 py-2 ">
                         Search</button>
                 </div>
-            <% } %>
-        
-        </div>
-        
-       <div class="col-12 col-md-6 d-flex justify-content-end">
-        <a href=" <%= newUsersPath() %>" ><button id="add-task" type="button" class="btn btn-primary px-4 py-2 ">Add
-            User</button>
-        </a>
-       </div>
-        
-       
-    </div>
-    <div class="content mt-3 shadow-sm rounded">
-        <table id="table" class="table table-hover   shadow-sm  rounded overflow-scroll table-fixed m-0">
-            
-            <thead>
-                <tr class="top">
-                    <th class="py-3 fw-normal text-center" scope="col">FirstName</th>
-                    <th class="py-3 fw-normal text-center" scope="col">LastName</th>
-                    <th class="py-3 fw-normal text-center" scope="col">Role</th>
-                    <th class="py-3 fw-normal text-center" scope="col">Email</th>
-                    
-					<th class="py-3 fw-normal text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody class="rounded-bottom" id="items">
-                <p id="text-table" class="opacity-75">
-                    There is no users.
-                </p>
-                <%= for (i) in users { %>
-                    <tr class="user">
-                       
-                     
-                        <td class="pt-5 pt-md-4  bi show-description align-items-center text-center">
-                           <a class="text-info hover" href="    <%= usersShowPath({id: i.ID})  %>" ><%= i.FirstName %></a> 
-                        </td>
-                        
-                        <td class=" pt-5 pt-md-4  text-center ">
-                             <%= i.LastName %>
-                        </td>
-                        <td class=" pt-5 pt-md-4 text-center">
-                            <%= i.Rol %>
-                        </td>
-						<td class=" pt-5 pt-md-4  text-center">
-                            <%= i.Email %>
-                        </td>
-                        
+                <% } %>
 
-                        <td class="d-flex py-5 py-md-4  justify-content-center align-items-center gap-4">
-                            <a href=" <%= editUsersPath({id: i.ID})  %>">
-                                <i class="fa-solid fa-pencil"></i>
+        </div>
+
+        <div class="col-12 col-md-6 d-flex justify-content-end">
+            <a href=" <%= newUsersPath() %>"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 ">Add
+                    User</button>
+            </a>
+        </div>
+
+
+    </div>
+
+    <div class="content mt-3  rounded ">
+        <div class="py-2 content-cards  gap-4">
+            <%= if (count==0) { %>
+                <div class="bg-white  text-muted py-4  card-task d-flex flex-column justify-content-center align-items-center">
+                    <div class="pb-2 text-center">
+                        <h2 class="text-muted fs-5 m-0">
+                           There is not any users yet.
+                        </h2>
+                        <span class="fs-6"> Add some users to see.</span>
+                    </div>
+                </div>
+            <% } %>
+            <%= for (i) in users { %>
+                
+                <div class="bg-white  text-muted py-4  card-task d-flex flex-column justify-content-between">
+                    <h2 class="fs-3">
+                        <a class="text-info hover" href="    <%= usersShowPath({id: i.ID})  %>">
+                            <%= i.FirstName %>
+                        </a>
+                    </h2>
+                    <div class="pb-2">
+                        <h2 class="text-muted fs-5 m-0">
+                            Last Name
+                        </h2>
+                        <span class="fs-6">
+                            <%= i.LastName %>
+                        </span>
+                    </div>
+                    <div class="pb-2">
+                        <h2 class="text-muted fs-5 m-0">
+                            Rol
+                        </h2>
+                        <span class="fs-6">
+                            <%= i.Rol %>
+                        </span>
+                    </div>
+                    <div class="pb-2">
+                        <h2 class="text-muted fs-5 m-0">
+                            Email
+                        </h2>
+                        <span class="fs-6">
+                            <%= i.Email %>
+                        </span>
+                    </div>
+                    <div class="bottom">
+
+                    </div>
+                    <div>
+                        <h2 class="text-muted fs-6 m-0">
+                            Actions
+                        </h2>
+                        <div class="d-flex gap-3 ">
+                            <a href="<%= editUsersPath({id: i.ID})  %> " >
+                                <i class="fa-solid fa-pencil "></i>
                             </a>
                             <%= form({action: usersDeletePath({id:i.ID}) ,method:"DELETE"}) { %>
-                                    
-                                        <i class="far fa-trash-alt " data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>" ></i>
-                                        <%= partial("todo/modal.plush.html", {ID : i.ID}) %>
-                            <% } %> 
-                        </td>
-                    </tr>
-                <% } %> 
-            </tbody>
-        </table>
+                                <i class="far fa-trash-alt " data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>"></i>
+                                <%= partial("todo/modal.plush.html", {ID : i.ID}) %>
+                                    <% } %>
+                        </div>
+
+                    </div>
+                </div>
+            <% } %>
+        </div>
+       
     </div>
+    
     <div class="d-flex justify-content-between pt-3 ">
-            <%= paginator(pagination) %>
-            <span class="opacity-25">Displaying <%= pagination.Offset + 1 %> - <%= pagination.Offset + pagination.PerPage %> of <%= pagination.TotalEntriesSize %></span> 
+        <%= paginator(pagination) %>
+            <span class="opacity-25">Displaying <%= pagination.Offset + 1 %> - <%= pagination.Offset +
+                        pagination.PerPage %> of <%= pagination.TotalEntriesSize %></span>
     </div>
-    <div  class="col-12 col-md-4 pt-4 d-md-none">
-        <%= form({action: "/users", method: "GET"}) { %>
+    <div class="col-12 col-md-4 pt-4 d-md-none">
+        <%= form({action: "/users" , method: "GET" }) { %>
             <div class="input-group">
-                <input  type="text" class="form-control " placeholder="Search" name="keyword">
-                <button  type="submit" class="btn btn-primary px-4 py-2 search-bottom">
+                <input type="text" class="form-control " placeholder="Search" name="keyword">
+                <button type="submit" class="btn btn-primary px-4 py-2 search-bottom">
                     Search</button>
             </div>
-        <% } %>
-    
+            <% } %>
+
     </div>
-    
+
 </section>

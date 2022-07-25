@@ -31,11 +31,11 @@
 
     </div>
     <section class="row pt-3 px-2">
-        <div class="bg-white shadow-sm col-12  p-4 d-flex flex-column gap-4 rounded-3 word-wrap">
+        <div class="bg-white shadow-sm col-12  p-4 d-flex flex-column  rounded-3 word-wrap">
             <h1 class="text-center fw-bold text-uppercase text-muted">Tasks</h1>
             <%= if (count == 0) { %>
                 <div class="d-flex justify-content-center">
-                    <h5 class="text-center">There is no tasks yet.</h5>
+                    <h5 class="text-center"> There is not any tasks yet.</h5>
                     
                 </div>
                
@@ -45,7 +45,7 @@
              
                 <%= for (task) in user.Tasks { %>
                   
-                    <div class="  bg-white border-radius col-md-5 col-12 height-card p-4 d-flex flex-column gap-4">
+                    <div class="  bg-white border-radius col-md-5 col-12 height-card px-4 pt-3 d-flex flex-column gap-4">
                         <div class="row">
                             <h5 class="col-6">Title</h5>
                             <p class="m-0 text-muted col-6"><%= task.Title %></p>

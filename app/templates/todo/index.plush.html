@@ -20,8 +20,89 @@
         </div>
      
     </div>
-    <div class="content mt-3 shadow-sm rounded position-relative">
-        <table id="table" class="table table-hover   shadow-sm  rounded overflow-scroll table-fixed m-0">
+    <div class="content mt-3  rounded  ">
+        <div class="py-2 content-cards  gap-4">
+            <%= if (count==0) { %>
+                <div class="bg-white  text-muted py-4  card-task d-flex flex-column justify-content-center align-items-center">
+                    <div class="pb-2 text-center">
+                        <h2 class="text-muted fs-5 m-0">
+                           There is not any tasks yet.
+                        </h2>
+                        <span class="fs-6"> Add some tasks to see.</span>
+                    </div>
+                </div>
+            <% } %>
+
+            <%= for (i) in tasks { %>
+            <div class="bg-white  text-muted py-4  card-task d-flex flex-column justify-content-between">
+                <h2 class="fs-3">
+                    <a class="text-info hover" href="<%= todoShowTodoIDPath({todo_id: i.ID})  %>" >   <%= i.Title %></a> 
+                </h2>
+                <div class="pb-2">
+                    <h2 class="text-muted fs-5 m-0">
+                        Must be
+                    </h2>
+                    <span class="fs-6"> <%= i.Must.Day() %> <%= i.Must.Month() %>
+                        <%= i.Must.Year() %></span>
+                </div>
+                <%= if (current_user.Rol == "admin") { %>
+                <div class="pb-2">
+                   
+                    <h2 class="text-muted fs-5 m-0">
+                        User
+                    </h2>
+                   
+                        <td class="pt-5 pt-md-4 ">
+                            <%= i.User.Email %>
+                        </td>  
+                </div>
+                <% } %>
+                <div class="bottom">
+
+                </div>
+                <div class="d-flex flex-wrap gap-3">
+                    <div >
+                        <h2 class="text-muted fs-6 m-0">
+                            Actions
+                        </h2>
+                        <div class="d-flex gap-3 " >
+                            <a href="<%= todoPath({todo_id: i.ID})%> " class="<%= isEdit(i) %>  ">
+                                <i class="fa-solid fa-pencil "></i>
+                            </a>
+                            <%= form({action: todoPath({todo_id: i.ID}) ,method:"DELETE"}) { %>
+                                    <i class="far fa-trash-alt " data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>" ></i>
+                                        <%= partial("todo/modal.plush.html", {ID : i.ID}) %>
+                            <% } %> 
+                        </div>
+                        
+                    </div>
+
+                   <div >
+                    <h2 class="text-muted fs-6 m-0">
+                        Status
+                    </h2>
+
+                    <div class="d-flex gap-3" >
+                        <%= form({action: todoStatusTodoIDPath({todo_id:i.ID }) ,method:"PUT", id:"form-status"}) { %>
+                            <%= if (i.Status == true)  {%>
+                                
+                                <button class="button p-0" type="submit"><i class="fa-solid fa-ban"></i></button>
+                            <% } else { %>
+                                <button class="button p-0" type="submit"><i class="fa-solid fa-circle-check"></i> </button>
+                            <% } %>
+                         <% } %> 
+                    </div>
+                    
+                   </div>
+                   
+                </div>
+            </div>
+            <% } %> 
+        </div>
+       
+
+
+        <!-- <table id="table" class="table table-hover   shadow-sm  rounded overflow-scroll table-fixed m-0">
             <thead>
                 <tr class="top">
                     <th class="py-3"></th>
@@ -40,14 +121,7 @@
                 <%= for (i) in tasks { %>
                     <tr class="tasks">
                         <td class="pt-5 pt-md-4  text-center px-2">
-                            <%= form({action: todoStatusTodoIDPath({todo_id:i.ID }) ,method:"PUT", id:"form-status"}) { %>
-                                <%= if (i.Status == true)  {%>
-                                    
-                                    <button class="button p-0" type="submit"><i class="fa-solid fa-ban"></i></button>
-                                <% } else { %>
-                                    <button class="button p-0" type="submit"><i class="fa-solid fa-circle-check"></i> </button>
-                                <% } %>
-                             <% } %> 
+                            
                             
                         
                         </td>
@@ -78,7 +152,7 @@
                     </tr>
                 <% } %> 
             </tbody>
-        </table>
+        </table> -->
     </div>
     <div class="d-flex justify-content-between pt-3 ">
             <%= paginator(pagination) %>

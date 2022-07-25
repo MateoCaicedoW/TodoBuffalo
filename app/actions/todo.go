@@ -2,6 +2,7 @@ package actions
 
 import (
 	"TodoBuffalo/app/models"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -45,7 +46,7 @@ func (t TodoResource) List(c buffalo.Context) error {
 			return err
 		}
 	}
-	setMessage(tx, c)
+	setMessage(tx, c, u)
 	SetTime(c)
 	c.Set("current_user", u)
 	c.Set("tasks", tasks)
@@ -54,7 +55,7 @@ func (t TodoResource) List(c buffalo.Context) error {
 }
 
 func (t TodoResource) New(c buffalo.Context) error {
-
+	u := c.Value("current_user").(*models.User)
 	tx := c.Value("tx").(*pop.Connection)
 	users := []models.User{}
 	if err := tx.All(&users); err != nil {
@@ -66,13 +67,13 @@ func (t TodoResource) New(c buffalo.Context) error {
 	findUsers(c, tx, users)
 
 	c.Set("task", task)
-	setMessage(tx, c)
+	setMessage(tx, c, u)
 	SetTime(c)
 	return c.Render(http.StatusOK, r.HTML("todo/new.plush.html"))
 }
 
 func (t TodoResource) Create(c buffalo.Context) error {
-
+	u := c.Value("current_user").(*models.User)
 	tx := c.Value("tx").(*pop.Connection)
 	users := []models.User{}
 	if err := tx.All(&users); err != nil {
@@ -88,7 +89,7 @@ func (t TodoResource) Create(c buffalo.Context) error {
 	task.Status = false
 	if err := validateCreateAndUpdate(c, task, tx, users); err != "" {
 
-		setMessage(tx, c)
+		setMessage(tx, c, u)
 		SetTime(c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("todo/new.plush.html"))
 
@@ -103,7 +104,7 @@ func (t TodoResource) Create(c buffalo.Context) error {
 }
 
 func (t TodoResource) Show(c buffalo.Context) error {
-
+	u := c.Value("current_user").(*models.User)
 	tx := c.Value("tx").(*pop.Connection)
 	users := []models.User{}
 	if err := tx.All(&users); err != nil {
@@ -116,7 +117,7 @@ func (t TodoResource) Show(c buffalo.Context) error {
 	if err := tx.Eager().Find(&task, id); err != nil {
 		return err
 	}
-	setMessage(tx, c)
+	setMessage(tx, c, u)
 	findUsers(c, tx, users)
 	SetTime(c)
 	c.Set("task", task)
@@ -124,7 +125,7 @@ func (t TodoResource) Show(c buffalo.Context) error {
 }
 
 func (t TodoResource) Update(c buffalo.Context) error {
-
+	u := c.Value("current_user").(*models.User)
 	tx := c.Value("tx").(*pop.Connection)
 	users := []models.User{}
 	if err := tx.All(&users); err != nil {
@@ -141,7 +142,7 @@ func (t TodoResource) Update(c buffalo.Context) error {
 	}
 
 	if err := validateCreateAndUpdate(c, taskTemp, tx, users); err != "" {
-		setMessage(tx, c)
+		setMessage(tx, c, u)
 		SetTime(c)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("todo/edit.plush.html"))
 	}
@@ -154,6 +155,7 @@ func (t TodoResource) Update(c buffalo.Context) error {
 }
 
 func (t TodoResource) Destroy(c buffalo.Context) error {
+
 	tx := c.Value("tx").(*pop.Connection)
 	taskTemp := &models.Task{}
 	id := c.Param("todo_id")
@@ -196,8 +198,9 @@ func Status(c buffalo.Context) error {
 }
 
 func ShowInformation(c buffalo.Context) error {
+	u := c.Value("current_user").(*models.User)
 	tx := c.Value("tx").(*pop.Connection)
-	setMessage(tx, c)
+	setMessage(tx, c, u)
 	SetTime(c)
 	task := &models.Task{}
 
@@ -241,11 +244,22 @@ func validateCreateAndUpdate(c buffalo.Context, task *models.Task, tx *pop.Conne
 	return ""
 }
 
-func setMessage(tx *pop.Connection, c buffalo.Context) {
-	tasks := models.Task{}
-	count, _ := tx.Count(tasks)
+func setMessage(tx *pop.Connection, c buffalo.Context, u *models.User) {
+	tasks := []models.Task{}
+	fmt.Println(u.ID)
+	if u.Rol == "admin" {
+		tx.Eager().All(&tasks)
+		fmt.Println("aqui")
+	}
+	if u.Rol != "admin" {
+		tx.Eager().Where("user_id = ?", u.ID).All(&tasks)
+
+	}
+
+	count := len(tasks)
 
 	message := strconv.Itoa(count) + " Tasks"
+	c.Set("count", count)
 	c.Set("message", message)
 }
 

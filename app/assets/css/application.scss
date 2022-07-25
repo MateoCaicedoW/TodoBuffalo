@@ -40,9 +40,35 @@ body a{
 .fa-trash-alt{
    color: #eb8c8c;
 }
+
+.content-cards{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  
+}
+
+.card-task{
+    border-radius: 10px;
+    border: 1px solid #F1F1F1;
+    padding-left: 30px;
+    padding-right: 30px;
+    word-wrap: break-word;
+}
+
+
+
+.bottom{
+    border-top:  1.2px solid #F1F1F1;
+    padding-top: 10px;
+    width: 150px;
+}
+
 table{
     border: none;
 }
+
+
+
 .top{
     background-color: #154360;
     color: white;
@@ -53,7 +79,7 @@ table{
 }
 
 .content{
-    height: 500px;
+    height: 700px;
     overflow-y: scroll;
 }
 .bd{
@@ -298,6 +324,10 @@ thead{
 
 
 @media screen and (max-width: 767px) {
+    .content{
+        height: 600px;
+    }
+
     .nav-menu {
       position: fixed;
       bottom: 0;
