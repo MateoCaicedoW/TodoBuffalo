@@ -249,7 +249,7 @@ func setMessage(tx *pop.Connection, c buffalo.Context, u *models.User) {
 	fmt.Println(u.ID)
 	if u.Rol == "admin" {
 		tx.Eager().All(&tasks)
-		fmt.Println("aqui")
+
 	}
 	if u.Rol != "admin" {
 		tx.Eager().Where("user_id = ?", u.ID).All(&tasks)
