@@ -24,7 +24,6 @@ func setRoutes(root *buffalo.App) {
 	root.GET("/signin", actions.AuthNew)
 	root.POST("/signin", actions.AuthCreate)
 	root.DELETE("/signout", actions.AuthDestroy)
-
 	root.GET("/users/new", actions.UsersNew)
 	root.POST("/users/new", actions.UsersCreate)
 	root.GET("/users", middleware.MyMiddleware(actions.UsersList))
