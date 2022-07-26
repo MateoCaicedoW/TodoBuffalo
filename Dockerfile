@@ -1,22 +1,30 @@
 FROM golang:1.18-alpine as builder
 
-# Installing nodejs
-RUN apk add --update nodejs-current curl bash build-base
+ENV GO111MODULE on
+ENV GOPROXY https://proxy.golang.org/
+
+# Installing nodejs and other dependecies
+RUN apk add --update nodejs-current python2 curl bash build-base
 
 # Installing Yarn
-RUN curl -o- -L https://yarnpkg.com/install.sh | bash
+RUN curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.22.10
 ENV PATH="$PATH:/root/.yarn/bin:/root/.config/yarn/global/node_modules"
 
-# Installing Ox
-RUN go install github.com/wawandco/ox/cmd/ox@latest
 WORKDIR /lit_gorge_57839
+ADD go.mod .
+ADD go.sum .
+RUN go mod download -x
+
+# Installing ox
+RUN go install github.com/wawandco/oxpecker/cmd/ox@master
 ADD . .
 
-# Building the application binary in bin/app 
+# Building the application binary in bin/app
 RUN ox build --static -o bin/app
 
+RUN go build -o ./bin/cli -ldflags '-linkmode external -extldflags "-static"' ./cmd/ox 
+
 FROM alpine
-# Binaries
 
 # Binaries
 COPY --from=builder /lit_gorge_57839/bin/app /bin/app
