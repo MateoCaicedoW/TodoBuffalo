@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine as builder
+FROM golang:1.16-rc-alpine as builder
 
 ENV GO111MODULE on
 ENV GOPROXY https://proxy.golang.org/
