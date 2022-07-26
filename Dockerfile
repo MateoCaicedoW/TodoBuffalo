@@ -17,7 +17,10 @@ RUN ox build --static -o bin/app
 
 FROM alpine
 # Binaries
-COPY --from=builder /app/bin/* /bin/
+
+WORKDIR /bin/
+
+COPY --from=builder  /lit_gorge_57839/bin/app/ /bin/app
 
 # For migrations use 
 # CMD ox db migrate; app 
