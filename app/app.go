@@ -25,4 +25,5 @@ func New() *buffalo.App {
 	// Setting the routes for the app
 	setRoutes(root)
 	return root
+
 }
