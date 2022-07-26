@@ -20,7 +20,7 @@ FROM alpine
 
 WORKDIR /bin/
 
-COPY --from=builder  /lit_gorge_57839/bin/app/ /bin/app
+COPY --from=builder  /bin/* /bin/
 
 # For migrations use 
 # CMD ox db migrate; app 
