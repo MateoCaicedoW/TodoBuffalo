@@ -1,4 +1,4 @@
-FROM golang:1.16 as builder
+FROM golang:1.16-alpine as builder
 
 # Installing nodejs
 RUN apk add --update nodejs-current curl bash build-base
