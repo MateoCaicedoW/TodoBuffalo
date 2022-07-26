@@ -26,9 +26,13 @@ RUN go build -o ./bin/cli -ldflags '-linkmode external -extldflags "-static"' ./
 
 FROM alpine
 
+
+
 # Binaries
-COPY --from=builder /lit_gorge_57839/bin/app /bin/app
-COPY --from=builder /lit_gorge_57839/bin/cli /bin/cli
+WORKDIR /bin/
+
+COPY --from=builder /bin/app /bin/app
+COPY --from=builder /bin/cli /bin/cli
 
 ENV ADDR=0.0.0.0
 EXPOSE 3000
