@@ -1,1 +1,1 @@
-web: ox dev
+web: bin/TodoBuffalo
