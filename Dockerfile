@@ -33,6 +33,8 @@ WORKDIR /bin/
 
 COPY --from=builder /bin/* /bin/
 
+RUN ls -la /bin/
+
 ENV ADDR=0.0.0.0
 EXPOSE 3000
 
