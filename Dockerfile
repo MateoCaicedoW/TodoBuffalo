@@ -29,4 +29,6 @@ COPY --from=builder /todo/bin/* /bin/
 ENV ADDR=0.0.0.0
 EXPOSE 3000
 
+
+
 CMD /bin/cli db migrate; /bin/app
