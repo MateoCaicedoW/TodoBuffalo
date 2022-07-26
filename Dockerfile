@@ -31,8 +31,7 @@ FROM alpine
 # Binaries
 WORKDIR /bin/
 
-COPY --from=builder /bin/app /bin/app
-COPY --from=builder /bin/cli /bin/cli
+COPY --from=builder /bin/* /bin/
 
 ENV ADDR=0.0.0.0
 EXPOSE 3000
