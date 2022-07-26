@@ -9,7 +9,7 @@ ENV PATH="$PATH:/root/.yarn/bin:/root/.config/yarn/global/node_modules"
 
 # Installing Ox
 RUN go install github.com/wawandco/ox/cmd/ox@latest
-WORKDIR /TodoBuffalo
+WORKDIR /lit_gorge_57839
 ADD . .
 
 # Building the application binary in bin/app 
@@ -17,7 +17,7 @@ RUN ox build --static -o bin/app
 
 FROM alpine
 # Binaries
-COPY --from=builder /app/bin/* /bin/
+COPY --from=builder /lit_gorge_57839/bin/* /bin/
 
 # For migrations use 
 # CMD ox db migrate; app 
