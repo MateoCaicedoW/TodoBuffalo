@@ -30,5 +30,5 @@ ENV ADDR=0.0.0.0
 EXPOSE 3000
 
 
-
-CMD /bin/cli db migrate; /bin/app
+RUN ox db migrate 
+CMD /bin/app
