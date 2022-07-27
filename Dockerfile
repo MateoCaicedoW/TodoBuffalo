@@ -25,11 +25,8 @@ FROM alpine
 # Binaries
 WORKDIR /bin/
 COPY --from=builder /todo/bin/* /bin/
-COPY --from=builder /todo/migrations/* /bin/
+COPY --from=builder /todo/migrations /bin/migrations
 ENV ADDR=0.0.0.0
 EXPOSE 3000
 
-
-RUN /bin/cli db migrate
-
-CMD /bin/app
+CMD /bin/cli db migrate; /bin/app
