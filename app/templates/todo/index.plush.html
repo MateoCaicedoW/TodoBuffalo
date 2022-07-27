@@ -2,8 +2,8 @@
 
 <section class="layout-add d-flex flex-column">
     
-    <div class="justify-content-between row g-2 ">
-        <div  class="col-12 col-md-4 d-none d-md-block">
+    <div class="justify-content-between row g-2 gap-1 ">
+        <div  class="col-12 col-md-4">
             <%= form({action: "/todo", method: "GET"}) { %>
                 <div class="input-group">
                     <input id="search-users" type="text" class="form-control" placeholder="Search" name="keyword">
@@ -13,14 +13,14 @@
             <% } %>
         
         </div>
-        <div class="col-12 col-md-6 d-flex justify-content-end">
-            <a href="<%= newTodoPath() %>"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 justify-content-end">Add
+        <div class="col-12 col-md-3 col-lg-2">
+            <a href="<%= newTodoPath() %>"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 w-100">Add
                 Task</button>
         </a>
         </div>
      
     </div>
-    <div class="content mt-3  rounded  ">
+    <div class="content mt-2  rounded  ">
         <div class="py-2 content-cards  gap-4">
             <%= if (count==0) { %>
                 <div class="bg-white  text-muted py-4  card-task d-flex flex-column justify-content-center align-items-center">
@@ -100,73 +100,15 @@
             <% } %> 
         </div>
        
-
-
-        <!-- <table id="table" class="table table-hover   shadow-sm  rounded overflow-scroll table-fixed m-0">
-            <thead>
-                <tr class="top">
-                    <th class="py-3"></th>
-                    <th class="py-3 fw-normal">Task</th>
-                    <%= if (current_user.Rol == "admin") { %>
-                    <th class="py-3 fw-normal">User</th>
-                    <% } %>
-                    <th  class="py-3 fw-normal">Must be</th>
-                    <th class="py-3 fw-normal text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="rounded-bottom " id="items">
-                <p id="text-table" class="opacity-75">
-                    There is no task.
-                </p>
-                <%= for (i) in tasks { %>
-                    <tr class="tasks">
-                        <td class="pt-5 pt-md-4  text-center px-2">
-                            
-                            
-                        
-                        </td>
-                        <td class="pt-5 pt-md-4  text-info bi show-description">
-                            <a class="text-info hover" href="    <%= todoShowTodoIDPath({todo_id: i.ID})  %>" >   <%= i.Title %></a> 
-                         
-                        </td>
-                      
-                        <%= if (current_user.Rol == "admin") { %>
-                        <td class="pt-5 pt-md-4 ">
-                            <%= i.User.Email %>
-                        </td>
-                        <% } %>
-                       
-                        <td  class="pt-5 pt-md-4 ">
-                            <%= i.Must.Day() %> <%= i.Must.Month() %>
-                            <%= i.Must.Year() %>
-                        </td>
-                        <td class="d-flex py-5 py-md-4  justify-content-center align-items-center gap-4">
-                            <a href="<%= todoPath({todo_id: i.ID})%> " class="<%= isEdit(i) %>  ">
-                                <i class="fa-solid fa-pencil "></i>
-                            </a>
-                            <%= form({action: todoPath({todo_id: i.ID}) ,method:"DELETE",  class: "py-2 py-md-0"}) { %>
-                                    <i class="far fa-trash-alt " data-bs-toggle="modal" data-bs-target="#A<%=i.ID%>" ></i>
-                                        <%= partial("todo/modal.plush.html", {ID : i.ID}) %>
-                            <% } %> 
-                        </td>
-                    </tr>
-                <% } %> 
-            </tbody>
-        </table> -->
     </div>
     <div class="d-flex justify-content-between pt-3 ">
             <%= paginator(pagination) %>
-            <span class="opacity-25">Displaying <%= pagination.Offset + 1 %> - <%= pagination.Offset + pagination.PerPage %> of <%= pagination.TotalEntriesSize %></span> 
-    </div>
-    <div  class="col-12 col-md-4 pt-4 d-md-none">
-        <%= form({action: "/todo", method: "GET"}) { %>
-            <div  class="input-group ">
-                <input  type="text" class="form-control" placeholder="Search" name="keyword">
-                   <button  type="submit" class="btn btn-primary px-4 py-2 search-bottom  ">Search</button>
-            </div>
-        <% } %>
-    
-    </div>
+            <%= if (pagination.TotalEntriesSize > 20) { %>
+                <span class="opacity-25">Displaying <%= pagination.Offset + 1 %> - <%= pagination.Offset + pagination.PerPage %> of <%= pagination.TotalEntriesSize %></span> 
+                <!-- some html here -->
+            <% } %>
+     </div>
+
     
 </section>
 

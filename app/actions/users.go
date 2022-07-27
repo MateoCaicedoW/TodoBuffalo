@@ -39,7 +39,6 @@ func UsersList(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
-	fmt.Println(q.Paginator)
 	// Add the paginator to the context so it can be used in the template.
 	c.Set("pagination", q.Paginator)
 	c.Set("users", users)

@@ -2,7 +2,6 @@ package actions
 
 import (
 	"TodoBuffalo/app/models"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -246,7 +245,7 @@ func validateCreateAndUpdate(c buffalo.Context, task *models.Task, tx *pop.Conne
 
 func setMessage(tx *pop.Connection, c buffalo.Context, u *models.User) {
 	tasks := []models.Task{}
-	fmt.Println(u.ID)
+
 	if u.Rol == "admin" {
 		tx.Eager().All(&tasks)
 

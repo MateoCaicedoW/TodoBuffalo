@@ -1,7 +1,7 @@
 <section class="layout-add d-flex flex-column">
 
     <div class="justify-content-between row g-2 ">
-        <div class="col-12 col-md-4 d-none d-md-block">
+        <div class="col-12 col-md-4 ">
             <%= form({action: "/users" , method: "GET" }) { %>
                 <div class="input-group">
                     <input id="search-users" type="text" class="form-control" placeholder="Search" name="keyword">
@@ -12,8 +12,8 @@
 
         </div>
 
-        <div class="col-12 col-md-6 d-flex justify-content-end">
-            <a href=" <%= newUsersPath() %>"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 ">Add
+        <div class="col-12 col-md-3 col-lg-2">
+            <a href=" <%= newUsersPath() %>"><button id="add-task" type="button" class="btn btn-primary px-4 py-2 w-100">Add
                     User</button>
             </a>
         </div>
@@ -91,18 +91,11 @@
     
     <div class="d-flex justify-content-between pt-3 ">
         <%= paginator(pagination) %>
-            <span class="opacity-25">Displaying <%= pagination.Offset + 1 %> - <%= pagination.Offset +
-                        pagination.PerPage %> of <%= pagination.TotalEntriesSize %></span>
+        <%= if (pagination.TotalEntriesSize > 20) { %>
+            <span class="opacity-25">Displaying <%= pagination.Offset + 1 %> - <%= pagination.Offset + pagination.PerPage %> of <%= pagination.TotalEntriesSize %></span> 
+            <!-- some html here -->
+        <% } %>
     </div>
-    <div class="col-12 col-md-4 pt-4 d-md-none">
-        <%= form({action: "/users" , method: "GET" }) { %>
-            <div class="input-group">
-                <input type="text" class="form-control " placeholder="Search" name="keyword">
-                <button type="submit" class="btn btn-primary px-4 py-2 search-bottom">
-                    Search</button>
-            </div>
-            <% } %>
 
-    </div>
 
 </section>
