@@ -3,4 +3,4 @@ build:
     web: Dockerfile
     
 run:
-  web: /bin/cli db migrate; /bin/app
+  web: /bin/cli db migrate; /bin/cli db task create:users:admin; /bin/app
