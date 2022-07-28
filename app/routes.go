@@ -15,6 +15,7 @@ func setRoutes(root *buffalo.App) {
 	root.Use(middleware.Database)
 	root.Use(middleware.ParameterLogger)
 	root.Use(middleware.CSRF)
+
 	root.GET("/", actions.HomeHandler)
 
 	root.Use(middleware.Authorize)

@@ -20,6 +20,7 @@ func AuthNew(c buffalo.Context) error {
 
 	c.Set("user", models.User{})
 	return c.Render(http.StatusOK, r.HTML("auth/new.plush.html"))
+
 }
 
 // AuthCreate attempts to log the user in with an existing account.
