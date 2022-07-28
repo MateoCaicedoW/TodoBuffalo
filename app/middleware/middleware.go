@@ -76,13 +76,3 @@ func MyMiddleware(next buffalo.Handler) buffalo.Handler {
 		return next(c)
 	}
 }
-
-func ForceSSL(next buffalo.Handler) buffalo.Handler {
-	return func(c buffalo.Context) error {
-		if c.Request().URL.Scheme != "https" {
-			// if you are not using https redirect
-			return c.Redirect(http.StatusMovedPermanently, "https://"+c.Request().Host+c.Request().URL.Path)
-		}
-		return next(c)
-	}
-}
