@@ -12,15 +12,23 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: TodoBuffalo_test
+          POSTGRES_DB: TodoBuffalo_test'
+
+          # Nombre del host utilizado para comunicarse con el contenedor de servicios PostgreSQL
+          POSTGRES_HOST: Postgres
+          # Puerto PostgreSQL predeterminado
           POSTGRES_PORT: 5432
+
+      
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        
   
     steps:
+    
       - name: Checkout
         uses: actions/checkout@v1
         
