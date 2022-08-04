@@ -32,4 +32,8 @@ jobs:
         run : |
           go install github.com/wawandco/ox/cmd/ox@latest
           
+      - name: runTest
+        run : |
+          ox test
+          
       
