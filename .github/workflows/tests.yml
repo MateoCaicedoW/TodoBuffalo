@@ -9,9 +9,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Dowloand ox
+      - name: Download ox
         run : |
           go install github.com/wawandco/ox/cmd/ox@latest
+      - name: generate cmd ox
+        run : |
+          ox generate ox
       - name: Run test
         run: |
           ox test
