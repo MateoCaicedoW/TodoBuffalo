@@ -1,21 +1,23 @@
 name: Runtest
 
 on:
-  [push]
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
 jobs:
-  Checkout:
+ build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
+    - uses: actions/checkout@v3
 
-      - name: Download ox
-        run : |
-          go install github.com/wawandco/ox/cmd/ox@latest
-      - name: generate cmd ox
-        run : |
-          ox generate ox
-      - name: Run test
-        run: |
-          ox test
-     
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+    
+
+    - name: Test
+      run: go test -p 1 ./...
+  
