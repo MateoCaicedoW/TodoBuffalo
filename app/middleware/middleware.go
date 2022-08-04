@@ -8,10 +8,10 @@ import (
 	"net/http"
 
 	"github.com/gobuffalo/buffalo"
+
 	csrf "github.com/gobuffalo/mw-csrf"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
 	"github.com/gobuffalo/pop/v6"
-
 	"github.com/markbates/errx"
 	"github.com/wawandco/ox/pkg/buffalotools"
 )
@@ -76,3 +76,10 @@ func MyMiddleware(next buffalo.Handler) buffalo.Handler {
 		return next(c)
 	}
 }
+
+// func ForceSSL() buffalo.MiddlewareFunc {
+// 	return forcessl.Middleware(secure.Options{
+// 		SSLRedirect:     envy.Get("GO_ENV", "production"),
+// 		SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
+// 	})
+// }
