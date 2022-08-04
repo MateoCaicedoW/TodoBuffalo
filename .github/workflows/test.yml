@@ -14,9 +14,9 @@ jobs:
         image: postgres:14
         # Provide the password for postgres
         env:
+          POSTGRES_HOST: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: TodoBuffalo_test
          
           
         # Set health checks to wait until postgres has started
@@ -36,12 +36,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         
-      - name: installOX
-        run : |
-          go install github.com/wawandco/ox/cmd/ox@latest
-    
-      - name: runTest
-        run : |
+      - name: test
+        env: 
+          DATABASE_URL: "postgres://postgres:postgres@127.0.0.1:${{ job.services.postgres.ports[5432] }}/TodoBuffalo_test?sslmode=disable"
+        run: |
+          go install github.com/wawandco/ox/cmd/ox@0.12.3
           ox test
           
       
