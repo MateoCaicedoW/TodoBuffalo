@@ -33,8 +33,10 @@ jobs:
         run : |
           go install github.com/wawandco/ox/cmd/ox@latest
           
+      - name: runMigrations
+        run: ox db migrate
       - name: runTest
         run : |
-          ox test
+          go test -p 1 ./...
           
       
