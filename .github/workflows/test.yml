@@ -40,9 +40,7 @@ jobs:
       - name: installOX
         run : |
           go install github.com/wawandco/ox/cmd/ox@latest
-          
-      - name: runMigrations
-        run: ox db migrate
+    
       - name: runTest
         run : |
           go test -p 1 ./...
